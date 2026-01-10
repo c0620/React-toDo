@@ -2,18 +2,27 @@ import * as mock from "./data";
 import { useState } from "react";
 
 export default function Gantt() {
-  let days = mock.month;
-  let tasks = mock.tagged_tasks;
+  const days = mock.month;
+  let taggedTasks = mock.tagged_tasks; //!!!!
+  const colors = mock.colors;
+
+  let i = 0;
+  for (let id in taggedTasks) {
+    taggedTasks[id].color = colors[i % colors.length];
+    i++;
+  }
+
+  console.log(taggedTasks);
 
   return (
     <div className="gantt">
-      <Timeline days={days} tasks={tasks} />
-      <Filter tasks={tasks} />
+      <Timeline days={days} taggedTasks={taggedTasks} />
+      <Filter tasks={taggedTasks} />
     </div>
   );
 }
 
-function Timeline({ days, tasks }) {
+function Timeline({ days, taggedTasks }) {
   let mock_days = days.jan;
 
   const [dayIndexStart, setDayIndexStart] = useState(0);
@@ -27,13 +36,15 @@ function Timeline({ days, tasks }) {
     }
   }
 
-  console.log(switchDays);
-
   return (
     <div>
       <SwitchWeek days={switchDays} handleDayIndex={handleDayIndex} />
 
-      <TimelineTasks tasks={tasks} days={switchDays} />
+      <TimelineTasks
+        taggedTasks={taggedTasks}
+        days={switchDays}
+        dayIndexStart={dayIndexStart}
+      />
     </div>
   );
 }
@@ -55,7 +66,7 @@ function SwitchWeek({ days, handleDayIndex }) {
   );
 }
 
-function Track({ id, position, color, isStart = false, isEnd = false }) {
+function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
   let rad;
   if (isStart && isEnd) {
     rad = "20px";
@@ -65,6 +76,11 @@ function Track({ id, position, color, isStart = false, isEnd = false }) {
     rad = "0px 20px 20px 0px";
   } else {
     rad = "0px";
+  }
+
+  let color = taggedTask.color.main;
+  if (taggedTask.task.done) {
+    color = taggedTask.color.dark;
   }
 
   return (
@@ -106,68 +122,118 @@ function Day({ day }) {
   );
 }
 
-function TimelineTasks({ tasks, days }) {
-  function calculateDays(tasks, days) {
+function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
+  function calculateDays(taggedTasks, days) {
     let tracks = [];
+    let row = 0;
 
-    for (let tag in tasks) {
-      let track = {};
-      let task = tasks[tag];
+    for (let tag in taggedTasks) {
+      let tagged = taggedTasks[tag];
+      let fillWeek = {
+        lstart: false,
+        lend: false,
+        tasks: [],
+        row: row++,
+      };
 
-      if (days.indexOf(task.start) != -1) {
-        track.start = days.indexOf(task.start) + 1;
+      console.log(tagged);
+
+      if (days.indexOf(tagged.first) != -1) {
+        tagged.start = days.indexOf(tagged.first) + 1;
       } else {
-        if (task.start < days[0]) {
-          track.start = 1;
-          track.lstart = true;
+        if (tagged.start < days[0]) {
+          tagged.start = 1;
+          fillWeek.lstart = true;
         } else continue;
       }
 
-      if (days.indexOf(task.end) != -1) {
-        track.end = days.indexOf(task.end) + 1;
+      if (days.indexOf(tagged.last) != -1) {
+        tagged.end = days.indexOf(tagged.last) + 1;
       } else {
-        if (task.end > days[6]) {
-          track.end = 7;
-          track.lend = true;
+        if (tagged.last > days[6]) {
+          tagged.end = 7;
+          fillWeek.lend = true;
         } else continue;
       }
 
-      track.id = tag;
-      track.color = "red";
+      let weekTasks = tagged.tasks.filter(
+        (task) => +task.date >= +days[0] && +task.date <= +days[days.length - 1]
+      );
 
-      tracks.push(track);
+      if (fillWeek.lstart && +weekTasks[0].date != +days[0]) {
+        let prev;
+        if (weekTasks) {
+          let prev_ind = tagged.tasks.indexOf(weekTasks[0]);
+          prev = tagged.tasks[prev_ind - 1];
+        } else {
+          let prevs = tagged.tasks.filter((task) => +task.date < +days[0]);
+          prev = prevs[prevs.length - 1];
+        }
+        weekTasks.unshift(prev);
+      }
+
+      let i = 0;
+      console.log(weekTasks);
+      for (let s = tagged.start; s <= tagged.end; s++) {
+        let dayTask;
+
+        if (i < weekTasks.length && +weekTasks[i].date <= +days[s - 1]) {
+          dayTask = weekTasks[i];
+          i++;
+        } else {
+          dayTask = weekTasks[i - 1];
+        }
+        console.log(dayTask);
+        fillWeek.tasks.push({
+          color: tagged.color,
+          position: s,
+          task: dayTask,
+        });
+      }
+      console.log(fillWeek);
+      //tracks.push(tagged);
+      tracks.push(fillWeek);
     }
     return tracks;
   }
 
-  let calculated = calculateDays(tasks, days);
+  function setCalendarLength(calculated) {
+    let calendarTracks = [];
+    console.log(calculated);
+    for (let ind = 0; ind < calculated.length; ind++) {
+      let calc = calculated[ind];
 
-  let rows = calculated.map((calc) => {
-    let line = [];
+      console.log(calc);
+      for (let i = 0; i < calc.tasks.length; i++) {
+        let start = false;
+        let end = false;
 
-    for (let i = calc.start; i <= calc.end; i++) {
-      let start = false;
-      let end = false;
+        if (i == 0 && !calc.lstart) {
+          start = true;
+        }
 
-      if (i == calc.start && !calc.lstart) {
-        start = true;
+        if (i == calc.tasks.length - 1 && !calc.lend) {
+          end = true;
+        }
+        console.log(calc.tasks[i]);
+        calendarTracks.push(
+          <Track
+            id={calc.row}
+            position={calc.tasks[i].position}
+            taggedTask={calc.tasks[i]}
+            isStart={start}
+            isEnd={end}
+          />
+        );
       }
-
-      if (i == calc.end && !calc.lend) {
-        end = true;
-      }
-      line.push(
-        <Track
-          id={calc.id}
-          position={i}
-          color={calc.color}
-          isStart={start}
-          isEnd={end}
-        />
-      );
     }
-    return line;
-  });
+    return calendarTracks;
+  }
+
+  let allTracks = calculateDays(taggedTasks, days);
+  allTracks = setCalendarLength(allTracks);
+
+  console.log(allTracks);
 
   return (
     <div
@@ -179,7 +245,7 @@ function TimelineTasks({ tasks, days }) {
         gridTemplateRows: "repeat(7, 1fr)",
       }}
     >
-      {rows}
+      {allTracks}
     </div>
   );
 }

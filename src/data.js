@@ -60,23 +60,23 @@ for (let i = 0; i < user_tasks.length; i++) {
   if (user_tasks[i].tag.id in tagged_tasks) {
     const task = tagged_tasks[user_tasks[i].tag.id];
 
-    if (+user_tasks[i].date < +task.start) {
-      task.start = user_tasks[i].date;
+    if (+user_tasks[i].date < +task.first) {
+      task.first = user_tasks[i].date;
     }
-    if (+user_tasks[i].date > +task.end) {
-      task.end = user_tasks[i].date;
+    if (+user_tasks[i].date > +task.last) {
+      task.last = user_tasks[i].date;
     }
   } else {
     tagged_tasks[user_tasks[i].tag.id] = {};
-    tagged_tasks[user_tasks[i].tag.id].start = user_tasks[i].date;
-    tagged_tasks[user_tasks[i].tag.id].end = user_tasks[i].date;
+    tagged_tasks[user_tasks[i].tag.id].first = user_tasks[i].date;
+    tagged_tasks[user_tasks[i].tag.id].last = user_tasks[i].date;
     tagged_tasks[user_tasks[i].tag.id].tasks = [];
   }
 
   tagged_tasks[user_tasks[i].tag.id].tasks.push(user_tasks[i]);
 }
 
-export let colors = {
+export let colorsO = {
   blue: "#99A2CE",
   blueD: "#5B67A5",
   purple: "#B8A5DE",
@@ -92,3 +92,34 @@ export let colors = {
   turquoise: "#99CEAE",
   turquoiseD: "#67997B",
 };
+
+export let colors = [
+  {
+    main: "#99A2CE",
+    dark: "#5B67A5",
+  },
+  {
+    main: "#B8A5DE",
+    dark: "#765EA8",
+  },
+  {
+    main: "#EBA072",
+    dark: "#C77442",
+  },
+  {
+    main: "#C3CE92",
+    dark: "#959F64",
+  },
+  {
+    main: "#E6C27F",
+    dark: "#C9A45E",
+  },
+  {
+    main: "#DEA5A6",
+    dark: "#C4797A",
+  },
+  {
+    main: "#99CEAE",
+    dark: "#67997B",
+  },
+];
