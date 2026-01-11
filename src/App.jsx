@@ -11,7 +11,7 @@ const test_card = {
   title: "Очень динное очень важное название",
 };
 
-function Card({ task, handleClickDone }) {
+function Card({ task, handleClickDone, handleDeleteCard }) {
   return (
     <div className="card">
       <div>
@@ -26,10 +26,10 @@ function Card({ task, handleClickDone }) {
       <h3>{task.title}</h3>
       <div>
         <button onClick={() => handleClickDone(task)}>
-          {task.done ? "Выполнить" : "Отменить"}
+          {task.done ? "Отменить" : "Выполнить"}
         </button>
         <button>edit</button>
-        <button>delete</button>
+        <button onClick={() => handleDeleteCard(task)}>Удалить</button>
       </div>
     </div>
   );
@@ -40,23 +40,84 @@ function Button() {}
 function ProgressBar() {}
 
 function DashBoard() {
-  const [tasks, setTasks] = useState(mock.user_tasks);
+  const [taggedTasks, setTaggedTasks] = useState(mock.tagged_tasks);
 
   function handleClickDone(task) {
-    setTasks(
-      tasks.map((t) => {
-        if (t.id == task.id) {
-          t.done = !t.done;
-        }
+    console.log(task);
+    console.log(taggedTasks);
+
+    let currentTagId = task.tag.id;
+    let currentTag = taggedTasks[currentTagId];
+    let currentTagTasks = currentTag.tasks;
+
+    console.log(currentTagTasks);
+    currentTagTasks = currentTagTasks.map((t) => {
+      if (t.id != task.id) {
         return t;
-      })
-    );
+      } else {
+        return { ...t, done: !t.done };
+      }
+    });
+    console.log(currentTagTasks);
+
+    let newTagged = { ...currentTag, tasks: currentTagTasks };
+    let newTasks = { ...taggedTasks, [currentTagId]: newTagged };
+    setTaggedTasks(newTasks);
   }
+
+  function handleDeleteCard(task) {
+    let currentTagId = task.tag.id;
+    let currentTag = taggedTasks[currentTagId];
+    let currentTagTasks = currentTag.tasks.filter((t) => t.id != task.id);
+    console.log(currentTagTasks);
+    let newTasks;
+    if (currentTagTasks.length != 0) {
+      let first = currentTagTasks[0].date;
+      let last = currentTagTasks[0].date;
+      for (let i = 0; i < currentTagTasks.length; i++) {
+        if (+first > +currentTagTasks[i].date) {
+          first = currentTagTasks[i].date;
+        }
+        if (+last < +currentTagTasks[i].date) {
+          last = currentTagTasks[i].date;
+        }
+      }
+      let newTagged = {
+        ...currentTag,
+        tasks: currentTagTasks,
+        first,
+        last,
+      };
+      newTasks = { ...taggedTasks, [currentTagId]: newTagged };
+    } else {
+      newTasks = { ...taggedTasks };
+      delete newTasks[currentTagId];
+    }
+
+    setTaggedTasks(newTasks);
+    console.log(newTasks);
+  }
+
+  let tasks = [];
+
+  console.log(taggedTasks);
+
+  for (let tagId in taggedTasks) {
+    tasks.push(...taggedTasks[tagId].tasks);
+  }
+  console.log(tasks);
 
   return (
     <>
-      <Card task={tasks[0]} handleClickDone={handleClickDone} />
-      <Gantt />
+      {tasks.map((task) => (
+        <Card
+          task={task}
+          handleClickDone={handleClickDone}
+          handleDeleteCard={handleDeleteCard}
+        />
+      ))}
+
+      <Gantt tasks={taggedTasks} />
     </>
   );
 }

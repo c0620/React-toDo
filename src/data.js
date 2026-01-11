@@ -46,6 +46,20 @@ export let user_tasks = [
     title: "Сделать пет-проект",
     done: false,
   },
+  {
+    id: 3,
+    date: month.jan[9],
+    tag: user_tags[2],
+    title: "Вторая задача на день пета",
+    done: false,
+  },
+  {
+    id: 4,
+    date: month.jan[11],
+    tag: user_tags[2],
+    title: "Задача на день после пета",
+    done: false,
+  },
 ];
 
 export let tagged_tasks = {

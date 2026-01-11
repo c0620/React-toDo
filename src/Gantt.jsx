@@ -1,9 +1,9 @@
 import * as mock from "./data";
 import { useState } from "react";
 
-export default function Gantt() {
+export default function Gantt({ tasks }) {
   const days = mock.month;
-  let taggedTasks = mock.tagged_tasks; //!!!!
+  let taggedTasks = tasks; //!!!!
   const colors = mock.colors;
 
   let i = 0;
@@ -79,7 +79,11 @@ function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
   }
 
   let color = taggedTask.color.main;
-  if (taggedTask.task.done) {
+  console.log("track", taggedTask);
+  console.log(taggedTask.task);
+  console.log(taggedTask.task.reduce((d, t) => d && t.done, true));
+
+  if (taggedTask.task.reduce((d, t) => d && t.done, true)) {
     color = taggedTask.color.dark;
   }
 
@@ -141,7 +145,7 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
       if (days.indexOf(tagged.first) != -1) {
         tagged.start = days.indexOf(tagged.first) + 1;
       } else {
-        if (tagged.start < days[0]) {
+        if (tagged.first < days[0]) {
           tagged.start = 1;
           fillWeek.lstart = true;
         } else continue;
@@ -160,6 +164,11 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
         (task) => +task.date >= +days[0] && +task.date <= +days[days.length - 1]
       );
 
+      console.log(days[0]);
+      console.log(tagged.start);
+      console.log(tagged);
+      console.log(weekTasks);
+
       if (fillWeek.lstart && +weekTasks[0].date != +days[0]) {
         let prev;
         if (weekTasks) {
@@ -175,14 +184,26 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
       let i = 0;
       console.log(weekTasks);
       for (let s = tagged.start; s <= tagged.end; s++) {
-        let dayTask;
+        let dayTask = [];
+        console.log(days[s - 1]);
+        console.log(i);
 
         if (i < weekTasks.length && +weekTasks[i].date <= +days[s - 1]) {
-          dayTask = weekTasks[i];
-          i++;
+          if (+weekTasks[i].date == +days[s - 1]) {
+            while (i < weekTasks.length && +weekTasks[i].date == +days[s - 1]) {
+              console.log("indise");
+              dayTask.push(weekTasks[i]);
+              i++;
+            }
+          } else {
+            dayTask.push(weekTasks[i]);
+            i++;
+          }
         } else {
-          dayTask = weekTasks[i - 1];
+          let prev = fillWeek.tasks[fillWeek.tasks.length - 1].task;
+          dayTask.push(...prev);
         }
+
         console.log(dayTask);
         fillWeek.tasks.push({
           color: tagged.color,
@@ -231,6 +252,8 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
   }
 
   let allTracks = calculateDays(taggedTasks, days);
+
+  console.log(allTracks);
   allTracks = setCalendarLength(allTracks);
 
   console.log(allTracks);
