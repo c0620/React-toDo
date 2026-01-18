@@ -3,7 +3,8 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Gantt from "./Gantt";
-import * as mock from "./data";
+import { AddTask } from "./Add";
+import { TaskManager, useTasksTags } from "./TaskManager";
 
 const test_card = {
   data: "8 декабря 2026",
@@ -39,87 +40,43 @@ function Button() {}
 
 function ProgressBar() {}
 
-function DashBoard() {
-  const [taggedTasks, setTaggedTasks] = useState(mock.tagged_tasks);
+function Dashboard() {
+  const context = useTasksTags();
+
+  const tasks = context.tasksTags.tasks;
+  console.log(tasks);
 
   function handleClickDone(task) {
-    console.log(task);
-    console.log(taggedTasks);
-
-    let currentTagId = task.tag.id;
-    let currentTag = taggedTasks[currentTagId];
-    let currentTagTasks = currentTag.tasks;
-
-    console.log(currentTagTasks);
-    currentTagTasks = currentTagTasks.map((t) => {
-      if (t.id != task.id) {
-        return t;
-      } else {
-        return { ...t, done: !t.done };
-      }
-    });
-    console.log(currentTagTasks);
-
-    let newTagged = { ...currentTag, tasks: currentTagTasks };
-    let newTasks = { ...taggedTasks, [currentTagId]: newTagged };
-    setTaggedTasks(newTasks);
+    context.dispatch({ type: "taskToggleDone", task: task });
   }
 
   function handleDeleteCard(task) {
-    let currentTagId = task.tag.id;
-    let currentTag = taggedTasks[currentTagId];
-    let currentTagTasks = currentTag.tasks.filter((t) => t.id != task.id);
-    console.log(currentTagTasks);
-    let newTasks;
-    if (currentTagTasks.length != 0) {
-      let first = currentTagTasks[0].date;
-      let last = currentTagTasks[0].date;
-      for (let i = 0; i < currentTagTasks.length; i++) {
-        if (+first > +currentTagTasks[i].date) {
-          first = currentTagTasks[i].date;
-        }
-        if (+last < +currentTagTasks[i].date) {
-          last = currentTagTasks[i].date;
-        }
-      }
-      let newTagged = {
-        ...currentTag,
-        tasks: currentTagTasks,
-        first,
-        last,
-      };
-      newTasks = { ...taggedTasks, [currentTagId]: newTagged };
+    console.log(task);
+    if (task.tag.tasks == 1) {
+      context.dispatch({ tag: tasksTags.tag, type: "tagDelete" });
     } else {
-      newTasks = { ...taggedTasks };
-      delete newTasks[currentTagId];
+      context.dispatch({ type: "tagEdit", count: -1, tag: tasksTags.tag });
     }
-
-    setTaggedTasks(newTasks);
-    console.log(newTasks);
+    context.dispatch({ type: "taskDelete", task: task });
   }
-
-  let tasks = [];
-
-  console.log(taggedTasks);
-
-  for (let tagId in taggedTasks) {
-    tasks.push(...taggedTasks[tagId].tasks);
-  }
-  console.log(tasks);
 
   return (
     <>
-      {tasks.map((task) => (
-        <Card
-          task={task}
-          handleClickDone={handleClickDone}
-          handleDeleteCard={handleDeleteCard}
-        />
-      ))}
-
-      <Gantt tasks={taggedTasks} />
+      <div style={{ display: "flex" }}>
+        <Gantt />
+        <div style={{ flexDirection: "column" }}>
+          {tasks.map((task) => (
+            <Card
+              task={task}
+              handleClickDone={handleClickDone}
+              handleDeleteCard={handleDeleteCard}
+            />
+          ))}
+        </div>
+      </div>
+      <AddTask />
     </>
   );
 }
 
-export default DashBoard;
+export default Dashboard;

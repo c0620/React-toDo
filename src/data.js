@@ -6,7 +6,38 @@ for (let i = 1; i <= 31; i++) {
   month.jan.push(new Date(2026, 0, i));
 }
 
-export let user_tags = [
+export let colors = [
+  {
+    main: "#99A2CE",
+    dark: "#5B67A5",
+  },
+  {
+    main: "#B8A5DE",
+    dark: "#765EA8",
+  },
+  {
+    main: "#EBA072",
+    dark: "#C77442",
+  },
+  {
+    main: "#C3CE92",
+    dark: "#959F64",
+  },
+  {
+    main: "#E6C27F",
+    dark: "#C9A45E",
+  },
+  {
+    main: "#DEA5A6",
+    dark: "#C4797A",
+  },
+  {
+    main: "#99CEAE",
+    dark: "#67997B",
+  },
+];
+
+let user_tags = [
   {
     id: 0,
     name: "длинная цель",
@@ -24,7 +55,11 @@ export let user_tags = [
   },
 ];
 
-export let user_tasks = [
+for (let i = 0; i < user_tags.length; i++) {
+  user_tags[i].color = colors[i];
+}
+
+let user_tasks = [
   {
     id: 0,
     date: month.jan[1],
@@ -62,13 +97,20 @@ export let user_tasks = [
   },
 ];
 
-export let tagged_tasks = {
+let tagged_tasks = {
   //   user_tags[0], {
   //   start: Date(),
   //   end: Date(),
   //   tasks: [user_tasks],
   //}
 };
+
+export const initialTasksTags = {
+  tasks: user_tasks,
+  tags: user_tags,
+};
+
+console.log(initialTasksTags);
 
 for (let i = 0; i < user_tasks.length; i++) {
   if (user_tasks[i].tag.id in tagged_tasks) {
@@ -90,7 +132,7 @@ for (let i = 0; i < user_tasks.length; i++) {
   tagged_tasks[user_tasks[i].tag.id].tasks.push(user_tasks[i]);
 }
 
-export let colorsO = {
+let colorsO = {
   blue: "#99A2CE",
   blueD: "#5B67A5",
   purple: "#B8A5DE",
@@ -106,34 +148,3 @@ export let colorsO = {
   turquoise: "#99CEAE",
   turquoiseD: "#67997B",
 };
-
-export let colors = [
-  {
-    main: "#99A2CE",
-    dark: "#5B67A5",
-  },
-  {
-    main: "#B8A5DE",
-    dark: "#765EA8",
-  },
-  {
-    main: "#EBA072",
-    dark: "#C77442",
-  },
-  {
-    main: "#C3CE92",
-    dark: "#959F64",
-  },
-  {
-    main: "#E6C27F",
-    dark: "#C9A45E",
-  },
-  {
-    main: "#DEA5A6",
-    dark: "#C4797A",
-  },
-  {
-    main: "#99CEAE",
-    dark: "#67997B",
-  },
-];

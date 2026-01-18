@@ -1,18 +1,11 @@
 import * as mock from "./data";
 import { useState } from "react";
+import { useTaggedTasks } from "./TaskManager";
 
-export default function Gantt({ tasks }) {
+export default function Gantt() {
   const days = mock.month;
-  let taggedTasks = tasks; //!!!!
+  let taggedTasks = useTaggedTasks(); //!!!!
   const colors = mock.colors;
-
-  let i = 0;
-  for (let id in taggedTasks) {
-    taggedTasks[id].color = colors[i % colors.length];
-    i++;
-  }
-
-  console.log(taggedTasks);
 
   return (
     <div className="gantt">
@@ -78,6 +71,7 @@ function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
     rad = "0px";
   }
 
+  console.log(taggedTask);
   let color = taggedTask.color.main;
   console.log("track", taggedTask);
   console.log(taggedTask.task);
