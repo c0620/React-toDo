@@ -2,20 +2,25 @@ import * as mock from "./data";
 import { useState } from "react";
 import { useTaggedTasks } from "./TaskManager";
 
-export default function Gantt() {
+export default function Gantt({ onTrackHover, selectedTag }) {
   const days = mock.month;
   let taggedTasks = useTaggedTasks(); //!!!!
   const colors = mock.colors;
 
   return (
     <div className="gantt">
-      <Timeline days={days} taggedTasks={taggedTasks} />
+      <Timeline
+        days={days}
+        taggedTasks={taggedTasks}
+        onTrackHover={onTrackHover}
+        selectedTag={selectedTag}
+      />
       <Filter tasks={taggedTasks} />
     </div>
   );
 }
 
-function Timeline({ days, taggedTasks }) {
+function Timeline({ days, taggedTasks, onTrackHover, selectedTag }) {
   let mock_days = days.jan;
 
   const [dayIndexStart, setDayIndexStart] = useState(0);
@@ -37,6 +42,8 @@ function Timeline({ days, taggedTasks }) {
         taggedTasks={taggedTasks}
         days={switchDays}
         dayIndexStart={dayIndexStart}
+        onTrackHover={onTrackHover}
+        selectedTag={selectedTag}
       />
     </div>
   );
@@ -59,7 +66,16 @@ function SwitchWeek({ days, handleDayIndex }) {
   );
 }
 
-function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
+function Track({
+  id,
+  position,
+  taggedTask,
+  isStart = false,
+  isEnd = false,
+  onTrackHover,
+  opacity,
+}) {
+  const [isClicked, setIsClicked] = useState(false);
   let rad;
   if (isStart && isEnd) {
     rad = "20px";
@@ -71,7 +87,8 @@ function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
     rad = "0px";
   }
 
-  console.log(taggedTask);
+  console.log(taggedTask.task[0].title);
+  console.log(opacity);
   let color = taggedTask.color.main;
   console.log("track", taggedTask);
   console.log(taggedTask.task);
@@ -83,11 +100,16 @@ function Track({ id, position, taggedTask, isStart = false, isEnd = false }) {
 
   return (
     <div
+      onClick={() => {
+        onTrackHover(taggedTask.task[0].tag.id, isClicked);
+        setIsClicked(!isClicked);
+      }}
       style={{
         gridRow: Number(id) + 1,
         gridColumn: position,
         borderRadius: rad,
         backgroundColor: color,
+        opacity: opacity,
       }}
     ></div>
   );
@@ -120,7 +142,7 @@ function Day({ day }) {
   );
 }
 
-function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
+function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
   function calculateDays(taggedTasks, days) {
     let tracks = [];
     let row = 0;
@@ -132,9 +154,11 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
         lend: false,
         tasks: [],
         row: row++,
+        opacity: selectedTag ? (tag == selectedTag ? "100%" : "30%") : "100%",
       };
 
-      console.log(tagged);
+      console.log(fillWeek);
+      console.log(selectedTag);
 
       if (days.indexOf(tagged.first) != -1) {
         tagged.start = days.indexOf(tagged.first) + 1;
@@ -212,7 +236,7 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
     return tracks;
   }
 
-  function setCalendarLength(calculated) {
+  function makeTracks(calculated) {
     let calendarTracks = [];
     console.log(calculated);
     for (let ind = 0; ind < calculated.length; ind++) {
@@ -238,6 +262,8 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
             taggedTask={calc.tasks[i]}
             isStart={start}
             isEnd={end}
+            onTrackHover={onTrackHover}
+            opacity={calc.opacity}
           />
         );
       }
@@ -248,7 +274,7 @@ function TimelineTasks({ taggedTasks, days, dayIndexStart }) {
   let allTracks = calculateDays(taggedTasks, days);
 
   console.log(allTracks);
-  allTracks = setCalendarLength(allTracks);
+  allTracks = makeTracks(allTracks);
 
   console.log(allTracks);
 

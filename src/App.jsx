@@ -6,12 +6,6 @@ import Gantt from "./Gantt";
 import { AddTask } from "./Add";
 import { TaskManager, useTasksTags } from "./TaskManager";
 
-const test_card = {
-  data: "8 декабря 2026",
-  target: "тестовая цель",
-  title: "Очень динное очень важное название",
-};
-
 function Card({ task, handleClickDone, handleDeleteCard }) {
   return (
     <div className="card">
@@ -22,7 +16,7 @@ function Card({ task, handleClickDone, handleDeleteCard }) {
             month: "long",
           })}
         </div>
-        <div>{task.tag.name}</div>
+        <div style={{ color: task.tag.color.main }}>{task.tag.name}</div>
       </div>
       <h3>{task.title}</h3>
       <div>
@@ -43,8 +37,8 @@ function ProgressBar() {}
 function Dashboard() {
   const context = useTasksTags();
 
-  const tasks = context.tasksTags.tasks;
-  console.log(tasks);
+  let [localTasks, setLocalTasks] = useState(context.tasksTags.tasks);
+  let [selectedTag, setSelectedTag] = useState(null);
 
   function handleClickDone(task) {
     context.dispatch({ type: "taskToggleDone", task: task });
@@ -60,12 +54,37 @@ function Dashboard() {
     context.dispatch({ type: "taskDelete", task: task });
   }
 
+  function onTrackHover(tagId, isClicked) {
+    let newLocalTasks;
+    if (isClicked) {
+      setSelectedTag(null);
+      newLocalTasks = context.tasksTags.tasks;
+    } else {
+      setSelectedTag(tagId);
+      console.log(selectedTag);
+      newLocalTasks = localTasks.slice();
+      newLocalTasks.sort((a, b) => {
+        if (a.tag.id == tagId && b.tag.id == tagId) {
+          return 0;
+        }
+        if (a.tag.id != tagId && b.tag.id == tagId) {
+          return 1;
+        }
+        if (a.tag.id == tagId && b.tag.id != tagId) {
+          return -1;
+        }
+      });
+    }
+
+    setLocalTasks(newLocalTasks);
+  }
+
   return (
     <>
       <div style={{ display: "flex" }}>
-        <Gantt />
+        <Gantt onTrackHover={onTrackHover} selectedTag={selectedTag} />
         <div style={{ flexDirection: "column" }}>
-          {tasks.map((task) => (
+          {localTasks.map((task) => (
             <Card
               task={task}
               handleClickDone={handleClickDone}
