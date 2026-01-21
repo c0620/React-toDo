@@ -56,41 +56,43 @@ let user_tags = [
 ];
 
 for (let i = 0; i < user_tags.length; i++) {
-  user_tags[i].color = colors[i];
+  if (!("color" in user_tags[i])) {
+    user_tags[i].color = colors[i];
+  }
 }
 
 let user_tasks = [
   {
     id: 0,
-    date: month.jan[1],
+    date: "2026-01-02",
     tag: user_tags[1],
     title: "Запланировать задачу",
     done: false,
   },
   {
     id: 1,
-    date: month.jan[1],
+    date: "2026-01-09",
     tag: user_tags[2],
     title: "Прочитать учебник по сетям целиком и полностью",
     done: true,
   },
   {
     id: 2,
-    date: month.jan[9],
+    date: "2026-01-19",
     tag: user_tags[2],
     title: "Сделать пет-проект",
     done: false,
   },
   {
     id: 3,
-    date: month.jan[9],
+    date: "2026-01-19",
     tag: user_tags[2],
     title: "Вторая задача на день пета",
     done: false,
   },
   {
     id: 4,
-    date: month.jan[11],
+    date: "2026-01-23",
     tag: user_tags[2],
     title: "Задача на день после пета",
     done: false,

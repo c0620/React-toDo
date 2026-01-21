@@ -1,11 +1,12 @@
 import { act, createContext, useContext, useMemo, useReducer } from "react";
 import { initialTasksTags, colors } from "./data";
+import { YMDToDate, dateToYMD } from "./convertDate";
 
 const TasksContext = createContext(null);
 
 export function TaskManager({ children }) {
   const [tasksTags, dispatch] = useReducer(tasksReducer, initialTasksTags);
-
+  console.log(tasksTags);
   return (
     <TasksContext.Provider value={{ tasksTags, dispatch }}>
       {children}
@@ -32,10 +33,12 @@ export function useTaggedTasks() {
 function tasksReducer(tasksTags, action) {
   switch (action.type) {
     case "taskAdd": {
-      // !!! tasksReducer({ type: "tagEdit", count: 1, tag: action.task.tag });
+      let newTask = action.task;
+      newTask.id = tasksTags.tasks[tasksTags.tasks.length - 1].id + 1;
+
       return {
         ...tasksTags,
-        tasks: [...tasksTags.tasks, action.task],
+        tasks: [...tasksTags.tasks, newTask],
       };
     }
 
@@ -103,10 +106,10 @@ function makeTagged(user_tasks) {
     if (user_tasks[i].tag.id in tagged_tasks) {
       const task = tagged_tasks[user_tasks[i].tag.id];
 
-      if (+user_tasks[i].date < +task.first) {
+      if (+YMDToDate(user_tasks[i].date) < +YMDToDate(task.first)) {
         task.first = user_tasks[i].date;
       }
-      if (+user_tasks[i].date > +task.last) {
+      if (+YMDToDate(user_tasks[i].date) > +YMDToDate(task.last)) {
         task.last = user_tasks[i].date;
       }
     } else {

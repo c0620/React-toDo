@@ -1,11 +1,14 @@
 import * as mock from "./data";
 import { useState } from "react";
 import { useTaggedTasks } from "./TaskManager";
+import { YMDToDate, dateToYMD } from "./convertDate";
 
 export default function Gantt({ onTrackHover, selectedTag }) {
   const days = mock.month;
   let taggedTasks = useTaggedTasks(); //!!!!
   const colors = mock.colors;
+
+  console.log(taggedTasks);
 
   return (
     <div className="gantt">
@@ -142,7 +145,13 @@ function Day({ day }) {
   );
 }
 
-function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
+function TimelineTasks({
+  taggedTasks,
+  days,
+  onTrackHover,
+  selectedTag,
+  dayIndexStart,
+}) {
   function calculateDays(taggedTasks, days) {
     let tracks = [];
     let row = 0;
@@ -157,29 +166,44 @@ function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
         opacity: selectedTag ? (tag == selectedTag ? "100%" : "30%") : "100%",
       };
 
-      console.log(fillWeek);
-      console.log(selectedTag);
+      let normDays = days.map((day) => dateToYMD(day));
+      let normFirst = tagged.first;
+      let normLast = tagged.last;
 
-      if (days.indexOf(tagged.first) != -1) {
-        tagged.start = days.indexOf(tagged.first) + 1;
+      console.log(days);
+      console.log(tagged);
+
+      let dayFirst = YMDToDate(tagged.first);
+      let dayLast = YMDToDate(tagged.last);
+
+      if (normDays.indexOf(normFirst) != -1) {
+        tagged.start = normDays.indexOf(normFirst) + 1;
       } else {
-        if (tagged.first < days[0]) {
+        console.log(tagged.tasks[0].title);
+        console.log(normFirst);
+        console.log(dayFirst);
+
+        console.log(+days[0]);
+        if (+dayFirst < +days[0]) {
           tagged.start = 1;
           fillWeek.lstart = true;
         } else continue;
       }
+      console.log(tagged);
 
-      if (days.indexOf(tagged.last) != -1) {
-        tagged.end = days.indexOf(tagged.last) + 1;
+      if (normDays.indexOf(normLast) != -1) {
+        tagged.end = normDays.indexOf(normLast) + 1;
       } else {
-        if (tagged.last > days[6]) {
+        if (+dayLast > +days[6]) {
           tagged.end = 7;
           fillWeek.lend = true;
         } else continue;
       }
-
+      console.log(tagged);
       let weekTasks = tagged.tasks.filter(
-        (task) => +task.date >= +days[0] && +task.date <= +days[days.length - 1]
+        (task) =>
+          +YMDToDate(task.date) >= +days[0] &&
+          +YMDToDate(task.date) <= +days[days.length - 1]
       );
 
       console.log(days[0]);
@@ -187,13 +211,15 @@ function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
       console.log(tagged);
       console.log(weekTasks);
 
-      if (fillWeek.lstart && +weekTasks[0].date != +days[0]) {
+      if (fillWeek.lstart && +YMDToDate(weekTasks[0].date) != +days[0]) {
         let prev;
         if (weekTasks) {
           let prev_ind = tagged.tasks.indexOf(weekTasks[0]);
           prev = tagged.tasks[prev_ind - 1];
         } else {
-          let prevs = tagged.tasks.filter((task) => +task.date < +days[0]);
+          let prevs = tagged.tasks.filter(
+            (task) => +YMDToDate(task.date) < +days[0]
+          );
           prev = prevs[prevs.length - 1];
         }
         weekTasks.unshift(prev);
@@ -206,9 +232,15 @@ function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
         console.log(days[s - 1]);
         console.log(i);
 
-        if (i < weekTasks.length && +weekTasks[i].date <= +days[s - 1]) {
-          if (+weekTasks[i].date == +days[s - 1]) {
-            while (i < weekTasks.length && +weekTasks[i].date == +days[s - 1]) {
+        if (
+          i < weekTasks.length &&
+          +YMDToDate(weekTasks[i].date) <= +days[s - 1]
+        ) {
+          if (+YMDToDate(weekTasks[i].date) == +days[s - 1]) {
+            while (
+              i < weekTasks.length &&
+              +YMDToDate(weekTasks[i].date) == +days[s - 1]
+            ) {
               console.log("indise");
               dayTask.push(weekTasks[i]);
               i++;
@@ -270,7 +302,7 @@ function TimelineTasks({ taggedTasks, days, onTrackHover, selectedTag }) {
     }
     return calendarTracks;
   }
-
+  console.log(taggedTasks);
   let allTracks = calculateDays(taggedTasks, days);
 
   console.log(allTracks);
