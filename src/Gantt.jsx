@@ -189,7 +189,6 @@ function TimelineTasks({
           fillWeek.lstart = true;
         } else continue;
       }
-      console.log(tagged);
 
       if (normDays.indexOf(normLast) != -1) {
         tagged.end = normDays.indexOf(normLast) + 1;
@@ -199,38 +198,30 @@ function TimelineTasks({
           fillWeek.lend = true;
         } else continue;
       }
-      console.log(tagged);
+
       let weekTasks = tagged.tasks.filter(
         (task) =>
           +YMDToDate(task.date) >= +days[0] &&
           +YMDToDate(task.date) <= +days[days.length - 1]
       );
 
-      console.log(days[0]);
-      console.log(tagged.start);
-      console.log(tagged);
-      console.log(weekTasks);
-
-      if (fillWeek.lstart && +YMDToDate(weekTasks[0].date) != +days[0]) {
-        let prev;
-        if (weekTasks) {
+      if (weekTasks.length != 0) {
+        if (fillWeek.lstart && +YMDToDate(weekTasks[0].date) != +days[0]) {
           let prev_ind = tagged.tasks.indexOf(weekTasks[0]);
-          prev = tagged.tasks[prev_ind - 1];
-        } else {
-          let prevs = tagged.tasks.filter(
-            (task) => +YMDToDate(task.date) < +days[0]
-          );
-          prev = prevs[prevs.length - 1];
+          let prev = tagged.tasks[prev_ind - 1];
+          weekTasks.unshift(prev);
         }
+      } else {
+        let prevs = tagged.tasks.filter(
+          (task) => +YMDToDate(task.date) < +days[0]
+        );
+        let prev = prevs[prevs.length - 1];
         weekTasks.unshift(prev);
       }
 
       let i = 0;
-      console.log(weekTasks);
       for (let s = tagged.start; s <= tagged.end; s++) {
         let dayTask = [];
-        console.log(days[s - 1]);
-        console.log(i);
 
         if (
           i < weekTasks.length &&
@@ -250,18 +241,19 @@ function TimelineTasks({
             i++;
           }
         } else {
-          let prev = fillWeek.tasks[fillWeek.tasks.length - 1].task;
-          dayTask.push(...prev);
+          if (fillWeek.tasks[fillWeek.tasks.length - 1].length != 0) {
+            let prev = fillWeek.tasks[fillWeek.tasks.length - 1].task;
+            dayTask.push(...prev);
+          }
         }
 
-        console.log(dayTask);
         fillWeek.tasks.push({
           color: tagged.color,
           position: s,
           task: dayTask,
         });
       }
-      console.log(fillWeek);
+
       //tracks.push(tagged);
       tracks.push(fillWeek);
     }
