@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTaggedTasks } from "./TaskManager";
 import { YMDToDate, dateToYMD } from "./convertDate";
 
-export default function Gantt({ onTrackHover, selectedTag }) {
+export default function Gantt({ onTrackClick, selectedTag }) {
   const days = mock.month;
   let taggedTasks = useTaggedTasks(); //!!!!
   const colors = mock.colors;
@@ -15,7 +15,7 @@ export default function Gantt({ onTrackHover, selectedTag }) {
       <Timeline
         days={days}
         taggedTasks={taggedTasks}
-        onTrackHover={onTrackHover}
+        onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
       <Filter tasks={taggedTasks} />
@@ -23,7 +23,7 @@ export default function Gantt({ onTrackHover, selectedTag }) {
   );
 }
 
-function Timeline({ days, taggedTasks, onTrackHover, selectedTag }) {
+function Timeline({ days, taggedTasks, onTrackClick, selectedTag }) {
   let mock_days = days.jan;
 
   const [dayIndexStart, setDayIndexStart] = useState(0);
@@ -45,7 +45,7 @@ function Timeline({ days, taggedTasks, onTrackHover, selectedTag }) {
         taggedTasks={taggedTasks}
         days={switchDays}
         dayIndexStart={dayIndexStart}
-        onTrackHover={onTrackHover}
+        onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
     </div>
@@ -75,10 +75,9 @@ function Track({
   taggedTask,
   isStart = false,
   isEnd = false,
-  onTrackHover,
+  onTrackClick,
   opacity,
 }) {
-  const [isClicked, setIsClicked] = useState(false);
   let rad;
   if (isStart && isEnd) {
     rad = "20px";
@@ -104,8 +103,7 @@ function Track({
   return (
     <div
       onClick={() => {
-        onTrackHover(taggedTask.task[0].tag.id, isClicked);
-        setIsClicked(!isClicked);
+        onTrackClick(taggedTask.task[0].tag.id);
       }}
       style={{
         gridRow: Number(id) + 1,
@@ -148,7 +146,7 @@ function Day({ day }) {
 function TimelineTasks({
   taggedTasks,
   days,
-  onTrackHover,
+  onTrackClick,
   selectedTag,
   dayIndexStart,
 }) {
@@ -286,7 +284,7 @@ function TimelineTasks({
             taggedTask={calc.tasks[i]}
             isStart={start}
             isEnd={end}
-            onTrackHover={onTrackHover}
+            onTrackClick={onTrackClick}
             opacity={calc.opacity}
           />
         );

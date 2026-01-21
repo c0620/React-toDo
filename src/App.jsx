@@ -5,6 +5,7 @@ import "./App.css";
 import Gantt from "./Gantt";
 import { AddTask } from "./Add";
 import { TaskManager, useTasksTags } from "./TaskManager";
+import { YMDToDate } from "./convertDate";
 
 function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
   return (
@@ -78,7 +79,7 @@ function AddEditTask({
     let currentTag = tags.filter((tag) => +formObject.tag == tag.id)[0];
     let taskDate = formObject.date;
 
-    if (!id) {
+    if (id == undefined) {
       context.dispatch({
         type: "taskAdd",
         task: {
@@ -124,7 +125,8 @@ function AddEditTask({
           value={sDate}
           onChange={(e) => setSDate(e.target.value)}
         />
-        <label>Цель</label>
+        <SearchDropdown inputName={"tag"} defVal={tag.id} items={tags} />
+        {/* <label>Цель</label>
         <input></input>
         <select name="tag" required defaultValue={tag.id}>
           {tagList.map((currentTag) => {
@@ -137,29 +139,67 @@ function AddEditTask({
             }
             return <option value={currentTag.id}>{currentTag.name}</option>;
           })}
-        </select>
+        </select> */}
         <button>добавить задачу</button>
       </form>
     </div>
   );
 }
 
-function Button() {}
+function SearchDropdown({ inputName, defVal, items }) {
+  const [searchInput, setSearchInput] = useState(null);
+  console.log(inputName);
+  console.log(defVal);
+  console.log(items);
+
+  if ("name" in items[0] && searchInput) {
+    items = items.filter((item) => item.name.includes(searchInput));
+  } else if ("title" in items[0] && searchInput) {
+    items = items.filter((item) => item.title.includes(searchInput));
+  }
+
+  return (
+    <>
+      <input onChange={(e) => setSearchInput(e.target.value)}></input>
+      <select name={inputName} required value={defVal}>
+        {items.map((item) => {
+          return <option value={item.id}>{item.name}</option>;
+        })}
+      </select>
+      ;
+    </>
+  );
+}
 
 function ProgressBar() {}
 
 function Dashboard() {
   const context = useTasksTags();
 
-  let [localTasks, setLocalTasks] = useState(context.tasksTags.tasks);
+  let [localTasks, setLocalTasks] = useState(
+    sortTasks(context.tasksTags.tasks)
+  );
+
+  const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
-    let newLocalTasks = context.tasksTags.tasks;
-    setLocalTasks(newLocalTasks);
+    let newLocalTasks = sortTasks(context.tasksTags.tasks);
+    setLocalTasks(sortTasks(newLocalTasks));
   }, [context]);
 
-  let [selectedTag, setSelectedTag] = useState(null);
-  console.log(localTasks);
+  const [selectedTag, setSelectedTag] = useState(null);
+
+  function sortTasks(tasks) {
+    return [...tasks].sort((a, b) => {
+      if (YMDToDate(a.date) > YMDToDate(b.date)) {
+        return 1;
+      }
+      if (YMDToDate(a.date) < YMDToDate(b.date)) {
+        return -1;
+      }
+      return 0;
+    });
+  }
 
   function handleClickDone(task) {
     context.dispatch({ type: "taskToggleDone", task: task });
@@ -175,7 +215,7 @@ function Dashboard() {
     context.dispatch({ type: "taskDelete", task: task });
   }
 
-  function onTrackHover(tagId, isClicked) {
+  function onTrackClick(tagId) {
     let newLocalTasks;
     if (isClicked) {
       setSelectedTag(null);
@@ -196,7 +236,7 @@ function Dashboard() {
         }
       });
     }
-
+    setIsClicked(!isClicked);
     setLocalTasks(newLocalTasks);
   }
 
@@ -211,7 +251,7 @@ function Dashboard() {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <Gantt onTrackHover={onTrackHover} selectedTag={selectedTag} />
+        <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
         <div style={{ flexDirection: "column" }}>
           {localTasks.map((task) => (
             <Card
