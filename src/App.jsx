@@ -5,7 +5,7 @@ import "./App.css";
 import Gantt from "./Gantt";
 import { AddTask } from "./Add";
 import { TaskManager, useTasksTags } from "./TaskManager";
-import { YMDToDate } from "./convertDate";
+import { dateToYMD, YMDToDate } from "./convertDate";
 
 function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
   return (
@@ -24,7 +24,7 @@ function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
         <button onClick={() => handleClickDone(task)}>
           {task.done ? "Отменить" : "Выполнить"}
         </button>
-        <button onClick={() => handleEditCard("editTask", task)}>edit</button>
+        <button onClick={() => handleEditCard(task)}>edit</button>
         <button onClick={() => handleDeleteCard(task)}>Удалить</button>
       </div>
     </div>
@@ -43,33 +43,14 @@ function AddEditTag({
   const context = useTasksTags();
 }
 
-function AddEditTask({
-  id = undefined,
-  date = null,
-  tag = { id: 1 },
-  title = undefined,
-  done = false,
-}) {
+function AddEditTask({ task, handleEditField }) {
   const context = useTasksTags();
 
   let tags = context.tasksTags.tags;
 
-  const [sDate, setSDate] = useState("");
-
-  useEffect(() => {
-    const d = date ? new Date(date) : new Date();
-    setSDate(formatDateForInput(d));
-  }, [date]);
-
-  console.log(date);
-  console.log(sDate);
-  const [tagList, selectTagList] = useState(tags);
+  const d = task ? dateToYMD(new Date(task.date)) : dateToYMD(new Date());
 
   const formInput = useRef();
-
-  function formatDateForInput(date) {
-    return date.toISOString().slice(0, 10);
-  }
 
   function onTaskSubmit(e) {
     e.preventDefault();
@@ -79,21 +60,21 @@ function AddEditTask({
     let currentTag = tags.filter((tag) => +formObject.tag == tag.id)[0];
     let taskDate = formObject.date;
 
-    if (id == undefined) {
+    if (!task) {
       context.dispatch({
         type: "taskAdd",
         task: {
           date: taskDate,
           tag: currentTag,
           title: formObject.title,
-          done,
+          done: false,
         },
       });
 
       context.dispatch({
         type: "tagEdit",
         tag: {
-          id: tag.id,
+          id: currentTag.id,
         },
         count: 1,
       });
@@ -101,69 +82,70 @@ function AddEditTask({
       context.dispatch({
         type: "taskEdit",
         task: {
-          id,
+          id: task.id,
           date: taskDate,
           tag: currentTag,
           title: formObject.title,
-          done,
+          done: task.done,
         },
       });
     }
   }
 
-  function onTagInput(input) {}
-
   return (
     <div>
       <form onSubmit={onTaskSubmit} ref={formInput}>
         <label>Название задачи</label>
-        <input type="text" name="title" required defaultValue={title} />
+        <input
+          type="text"
+          name="title"
+          required
+          value={task ? task.title : ""}
+          onChange={(e) => handleEditField("title", e.target.value)}
+        />
         <label>День выполнения задачи</label>
         <input
           type="date"
           name="date"
-          value={sDate}
-          onChange={(e) => setSDate(e.target.value)}
+          value={d}
+          onChange={(e) => handleEditField("date", e.target.value)}
         />
-        <SearchDropdown inputName={"tag"} defVal={tag.id} items={tags} />
-        {/* <label>Цель</label>
-        <input></input>
-        <select name="tag" required defaultValue={tag.id}>
-          {tagList.map((currentTag) => {
-            if (currentTag.id == tag.id) {
-              return (
-                <option value={currentTag.id} selected>
-                  {currentTag.name}
-                </option>
-              );
-            }
-            return <option value={currentTag.id}>{currentTag.name}</option>;
-          })}
-        </select> */}
-        <button>добавить задачу</button>
+        <SearchDropdown
+          inputName={"tag"}
+          value={task ? task.tag.id : ""}
+          onChange={handleEditField}
+          items={tags}
+        />
+        <button type="submit">добавить задачу</button>
       </form>
     </div>
   );
 }
 
-function SearchDropdown({ inputName, defVal, items }) {
+function SearchDropdown({ inputName, value, onChange, items }) {
   const [searchInput, setSearchInput] = useState(null);
-  console.log(inputName);
-  console.log(defVal);
-  console.log(items);
-
+  let filteredItems = items;
   if ("name" in items[0] && searchInput) {
-    items = items.filter((item) => item.name.includes(searchInput));
+    filteredItems = items.filter((item) => item.name.includes(searchInput));
   } else if ("title" in items[0] && searchInput) {
-    items = items.filter((item) => item.title.includes(searchInput));
+    filteredItems = items.filter((item) => item.title.includes(searchInput));
   }
 
   return (
     <>
       <input onChange={(e) => setSearchInput(e.target.value)}></input>
-      <select name={inputName} required value={defVal}>
-        {items.map((item) => {
-          return <option value={item.id}>{item.name}</option>;
+      <select
+        name={inputName}
+        required
+        value={value}
+        onChange={(e) => onChange("tag", { id: Number(e.target.value) })}
+      >
+        {filteredItems.map((item) => {
+          return (
+            <option key={item.id} value={item.id}>
+              {item.name}
+            </option>
+          );
         })}
       </select>
       ;
@@ -240,12 +222,14 @@ function Dashboard() {
     setLocalTasks(newLocalTasks);
   }
 
-  let [addProps, setAddProps] = useState({});
+  const [fields, setFields] = useState(null);
 
-  function prepFields(type, data) {
-    if (type == "editTask") {
-      setAddProps({ ...data });
-    }
+  function handleEditCard(task) {
+    setFields({ ...task });
+  }
+
+  function handleEditField(field, value) {
+    setFields({ ...fields, [field]: value });
   }
 
   return (
@@ -258,12 +242,12 @@ function Dashboard() {
               task={task}
               handleClickDone={handleClickDone}
               handleDeleteCard={handleDeleteCard}
-              handleEditCard={prepFields}
+              handleEditCard={handleEditCard}
             />
           ))}
         </div>
       </div>
-      <AddEditTask {...addProps} />
+      <AddEditTask task={fields} handleEditField={handleEditField} />
     </>
   );
 }
