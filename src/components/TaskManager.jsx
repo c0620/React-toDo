@@ -1,6 +1,6 @@
 import { act, createContext, useContext, useMemo, useReducer } from "react";
-import { initialTasksTags, colors } from "./data";
-import { YMDToDate, dateToYMD } from "./convertDate";
+import { initialTasksTags, colors } from "../data";
+import { YMDToDate, dateToYMD } from "../utils/convertDate";
 
 const TasksContext = createContext(null);
 
@@ -16,7 +16,6 @@ export function TaskManager({ children }) {
 
 export function useTasksTags() {
   const tasksTagsContext = useContext(TasksContext);
-  console.log(tasksTagsContext);
   if (!tasksTagsContext) throw new Error("no context");
   return tasksTagsContext;
 }

@@ -1,7 +1,7 @@
-import * as mock from "./data";
+import * as mock from "../data";
 import { useState } from "react";
 import { useTaggedTasks } from "./TaskManager";
-import { YMDToDate, dateToYMD } from "./convertDate";
+import { YMDToDate, dateToYMD } from "../utils/convertDate";
 
 export default function Gantt({ onTrackClick, selectedTag }) {
   const days = mock.month;
@@ -161,7 +161,8 @@ function TimelineTasks({
         lend: false,
         tasks: [],
         row: row++,
-        opacity: selectedTag ? (tag == selectedTag ? "100%" : "30%") : "100%",
+        opacity:
+          selectedTag != null ? (tag == selectedTag ? "100%" : "30%") : "100%",
       };
 
       let normDays = days.map((day) => dateToYMD(day));
