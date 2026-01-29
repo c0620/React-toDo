@@ -74,14 +74,25 @@ function tasksReducer(tasksTags, action) {
         id: nextID,
         color: action.tag.color ? action.tag.color : colors[nextID],
         name: action.tag.name,
+        tasks: 0,
       };
       return { ...tasksTags, tags: [...tags, nextTag] };
+    }
+
+    case "tagIncrement": {
+      const newTags = tasksTags.tags.map((tag) => {
+        if (tag.id == action.tag.id) {
+          return { ...tag, tasks: tag.tasks + action.count };
+        }
+        return tag;
+      });
+      return { ...tasksTags, tags: newTags };
     }
 
     case "tagEdit": {
       const newTags = tasksTags.tags.map((tag) => {
         if (tag.id == action.tag.id) {
-          return { ...tag, tasks: tag.tasks + action.count };
+          return { ...action.tag };
         }
         return tag;
       });

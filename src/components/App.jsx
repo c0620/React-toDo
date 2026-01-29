@@ -64,11 +64,10 @@ function Dashboard() {
   }
 
   function handleDeleteCard(task) {
-    console.log(task);
     if (task.tag.tasks == 1) {
       context.dispatch({ tag: task.tag, type: "tagDelete" });
     } else {
-      context.dispatch({ type: "tagEdit", count: -1, tag: task.tag });
+      context.dispatch({ type: "tagIncrement", count: -1, tag: task.tag });
     }
     context.dispatch({ type: "taskDelete", task: task });
   }
@@ -80,7 +79,6 @@ function Dashboard() {
       newLocalTasks = context.tasksTags.tasks;
     } else {
       setSelectedTag(tagId);
-      console.log(selectedTag);
       newLocalTasks = localTasks.slice();
       newLocalTasks.sort((a, b) => {
         if (a.tag.id == tagId && b.tag.id == tagId) {

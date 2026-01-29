@@ -15,7 +15,6 @@ export function AddEditTask({ task, handleEditField }) {
     e.preventDefault();
     const form = new FormData(formInput.current);
     const formObject = Object.fromEntries(form.entries());
-    console.log(formObject);
     let currentTag = tags.filter((tag) => +formObject.tag == tag.id)[0];
     let taskDate = formObject.date;
 
@@ -31,7 +30,7 @@ export function AddEditTask({ task, handleEditField }) {
       });
 
       context.dispatch({
-        type: "tagEdit",
+        type: "tagIncrement",
         tag: {
           id: currentTag.id,
         },
