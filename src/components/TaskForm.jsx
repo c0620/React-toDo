@@ -1,15 +1,16 @@
 import { useTasksTags } from "./TaskManager";
 import { dateToYMD } from "../utils/convertDate";
 import { useRef, useState } from "react";
+import { SearchDropdown } from "./SearchDropdown";
 
 export function AddEditTask({ task, handleEditField }) {
   const context = useTasksTags();
+  const [searchInput, setSearchInput] = useState(null);
+  const formInput = useRef();
 
   let tags = context.tasksTags.tags;
 
   const d = task?.date ? dateToYMD(new Date(task.date)) : dateToYMD(new Date());
-
-  const formInput = useRef();
 
   function onTaskSubmit(e) {
     e.preventDefault();
@@ -68,45 +69,17 @@ export function AddEditTask({ task, handleEditField }) {
           value={d}
           onChange={(e) => handleEditField("date", e.target.value)}
         />
+        <input onChange={(e) => setSearchInput(e.target.value)}></input>
         <SearchDropdown
           inputName={"tag"}
           value={task?.tag ? task.tag.id : ""}
           onChange={handleEditField}
           items={tags}
+          searchInput={searchInput}
+          filterFunc={(tag) => tag.name}
         />
         <button type="submit">добавить задачу</button>
       </form>
     </div>
-  );
-}
-
-function SearchDropdown({ inputName, value, onChange, items }) {
-  const [searchInput, setSearchInput] = useState(null);
-  let filteredItems = items;
-  if ("name" in items[0] && searchInput) {
-    filteredItems = items.filter((item) => item.name.includes(searchInput));
-  } else if ("title" in items[0] && searchInput) {
-    filteredItems = items.filter((item) => item.title.includes(searchInput));
-  }
-
-  return (
-    <>
-      <input onChange={(e) => setSearchInput(e.target.value)}></input>
-      <select
-        name={inputName}
-        required
-        value={value}
-        onChange={(e) => onChange("tag", { id: Number(e.target.value) })}
-      >
-        {filteredItems.map((item) => {
-          return (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          );
-        })}
-      </select>
-      ;
-    </>
   );
 }
