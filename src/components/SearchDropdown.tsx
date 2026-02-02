@@ -1,0 +1,59 @@
+import React from "react";
+
+type onChangeFunc = {
+  (field: string, value: string | number | object): void;
+};
+
+type filterFunc = {
+  (item: object): string;
+};
+
+type userTag = {
+  id: number;
+  name: string;
+  tasks: number;
+};
+
+type SearchDropdownProps = {
+  searchInput: null | string;
+  inputName: string;
+  value: string;
+  onChange: onChangeFunc;
+  items: Array<userTag>;
+  filterFunc: filterFunc;
+};
+
+export function SearchDropdown({
+  searchInput,
+  inputName,
+  value,
+  onChange,
+  items,
+  filterFunc,
+}: SearchDropdownProps) {
+  const filteredItems = searchInput
+    ? items.filter((item) =>
+        filterFunc(item).toLowerCase().includes(searchInput.toLowerCase())
+      )
+    : items;
+
+  return (
+    <div>
+      <select
+        name={inputName}
+        required
+        value={value}
+        onChange={(e) => onChange("tag", { id: Number(e.target.value) })}
+      >
+        {filteredItems.map((item) => {
+          return (
+            <option key={item.id} value={item.id}>
+              {item.name}
+            </option>
+          );
+        })}
+      </select>
+      ;
+    </div>
+  );
+}
