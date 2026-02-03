@@ -8,8 +8,6 @@ export default function Gantt({ onTrackClick, selectedTag }) {
   let taggedTasks = useTaggedTasks(); //!!!!
   const colors = mock.colors;
 
-  console.log(taggedTasks);
-
   return (
     <div className="gantt">
       <Timeline
@@ -89,12 +87,7 @@ function Track({
     rad = "0px";
   }
 
-  console.log(taggedTask.task[0].title);
-  console.log(opacity);
   let color = taggedTask.color.main;
-  console.log("track", taggedTask);
-  console.log(taggedTask.task);
-  console.log(taggedTask.task.reduce((d, t) => d && t.done, true));
 
   if (taggedTask.task.reduce((d, t) => d && t.done, true)) {
     color = taggedTask.color.dark;
@@ -169,20 +162,12 @@ function TimelineTasks({
       let normFirst = tagged.first;
       let normLast = tagged.last;
 
-      console.log(days);
-      console.log(tagged);
-
       let dayFirst = YMDToDate(tagged.first);
       let dayLast = YMDToDate(tagged.last);
 
       if (normDays.indexOf(normFirst) != -1) {
         tagged.start = normDays.indexOf(normFirst) + 1;
       } else {
-        console.log(tagged.tasks[0].title);
-        console.log(normFirst);
-        console.log(dayFirst);
-
-        console.log(+days[0]);
         if (+dayFirst < +days[0]) {
           tagged.start = 1;
           fillWeek.lstart = true;
@@ -231,7 +216,6 @@ function TimelineTasks({
               i < weekTasks.length &&
               +YMDToDate(weekTasks[i].date) == +days[s - 1]
             ) {
-              console.log("indise");
               dayTask.push(weekTasks[i]);
               i++;
             }
@@ -261,11 +245,10 @@ function TimelineTasks({
 
   function makeTracks(calculated) {
     let calendarTracks = [];
-    console.log(calculated);
+
     for (let ind = 0; ind < calculated.length; ind++) {
       let calc = calculated[ind];
 
-      console.log(calc);
       for (let i = 0; i < calc.tasks.length; i++) {
         let start = false;
         let end = false;
@@ -277,7 +260,7 @@ function TimelineTasks({
         if (i == calc.tasks.length - 1 && !calc.lend) {
           end = true;
         }
-        console.log(calc.tasks[i]);
+
         calendarTracks.push(
           <Track
             id={calc.row}
@@ -293,13 +276,10 @@ function TimelineTasks({
     }
     return calendarTracks;
   }
-  console.log(taggedTasks);
+
   let allTracks = calculateDays(taggedTasks, days);
 
-  console.log(allTracks);
   allTracks = makeTracks(allTracks);
-
-  console.log(allTracks);
 
   return (
     <div
