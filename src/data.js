@@ -8,30 +8,37 @@ for (let i = 1; i <= 31; i++) {
 
 export let colors = [
   {
+    id: 0,
     main: "#99A2CE",
     dark: "#5B67A5",
   },
   {
+    id: 1,
     main: "#B8A5DE",
     dark: "#765EA8",
   },
   {
+    id: 2,
     main: "#EBA072",
     dark: "#C77442",
   },
   {
+    id: 3,
     main: "#C3CE92",
     dark: "#959F64",
   },
   {
+    id: 4,
     main: "#E6C27F",
     dark: "#C9A45E",
   },
   {
+    id: 5,
     main: "#DEA5A6",
     dark: "#C4797A",
   },
   {
+    id: 6,
     main: "#99CEAE",
     dark: "#67997B",
   },
@@ -51,7 +58,7 @@ let user_tags = [
   {
     id: 2,
     name: "учёба",
-    tasks: 2,
+    tasks: 4,
   },
 ];
 
@@ -65,35 +72,35 @@ let user_tasks = [
   {
     id: 0,
     date: "2026-01-02",
-    tag: user_tags[1],
+    tagId: user_tags[1].id,
     title: "Запланировать задачу",
     done: false,
   },
   {
     id: 1,
     date: "2026-01-09",
-    tag: user_tags[2],
+    tagId: user_tags[2].id,
     title: "Прочитать учебник по сетям целиком и полностью",
     done: true,
   },
   {
     id: 2,
     date: "2026-01-19",
-    tag: user_tags[2],
+    tagId: user_tags[2].id,
     title: "Сделать пет-проект",
     done: false,
   },
   {
     id: 3,
     date: "2026-01-19",
-    tag: user_tags[2],
+    tagId: user_tags[2].id,
     title: "Вторая задача на день пета",
     done: false,
   },
   {
     id: 4,
     date: "2026-01-23",
-    tag: user_tags[2],
+    tagId: user_tags[2].id,
     title: "Задача на день после пета",
     done: false,
   },
@@ -112,11 +119,9 @@ export const initialTasksTags = {
   tags: user_tags,
 };
 
-console.log(initialTasksTags);
-
 for (let i = 0; i < user_tasks.length; i++) {
-  if (user_tasks[i].tag.id in tagged_tasks) {
-    const task = tagged_tasks[user_tasks[i].tag.id];
+  if (user_tasks[i].tagId in tagged_tasks) {
+    const task = tagged_tasks[user_tasks[i].tagId];
 
     if (+user_tasks[i].date < +task.first) {
       task.first = user_tasks[i].date;
@@ -125,13 +130,13 @@ for (let i = 0; i < user_tasks.length; i++) {
       task.last = user_tasks[i].date;
     }
   } else {
-    tagged_tasks[user_tasks[i].tag.id] = {};
-    tagged_tasks[user_tasks[i].tag.id].first = user_tasks[i].date;
-    tagged_tasks[user_tasks[i].tag.id].last = user_tasks[i].date;
-    tagged_tasks[user_tasks[i].tag.id].tasks = [];
+    tagged_tasks[user_tasks[i].tagId] = {};
+    tagged_tasks[user_tasks[i].tagId].first = user_tasks[i].date;
+    tagged_tasks[user_tasks[i].tagId].last = user_tasks[i].date;
+    tagged_tasks[user_tasks[i].tagId].tasks = [];
   }
 
-  tagged_tasks[user_tasks[i].tag.id].tasks.push(user_tasks[i]);
+  tagged_tasks[user_tasks[i].tagId].tasks.push(user_tasks[i]);
 }
 
 let colorsO = {

@@ -96,7 +96,7 @@ function Track({
   return (
     <div
       onClick={() => {
-        onTrackClick(taggedTask.task[0].tag.id);
+        onTrackClick(taggedTask.task[0].tagId);
       }}
       style={{
         gridRow: Number(id) + 1,

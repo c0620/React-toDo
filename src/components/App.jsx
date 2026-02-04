@@ -7,7 +7,13 @@ import { AddEditTask } from "./TaskForm";
 import { AddEditTag } from "./TagForm";
 import { Progress } from "./Progress";
 
-function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
+function Card({
+  task,
+  tag,
+  handleClickDone,
+  handleDeleteCard,
+  handleEditCard,
+}) {
   return (
     <div className="card">
       <div>
@@ -17,7 +23,7 @@ function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
             month: "long",
           })}
         </div>
-        <div style={{ color: task.tag.color.main }}>{task.tag.name}</div>
+        <div style={{ color: tag.color.main }}>{tag.name}</div>
       </div>
       <h3>{task.title}</h3>
       <div>
@@ -34,16 +40,20 @@ function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
 function Dashboard() {
   const context = useTasksTags();
 
-  const [localTasks, setLocalTasks] = useState(
-    sortTasks(context.tasksTags.tasks)
-  );
+  const [localTasksTags, setLocalTasksTags] = useState({
+    tasks: sortTasks(context.tasksTags.tasks),
+    tags: context.tasksTags.tags,
+  });
 
   const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
     let newLocalTasks = sortTasks(context.tasksTags.tasks);
-    setLocalTasks(sortTasks(newLocalTasks));
-  }, [context]);
+    setLocalTasksTags({
+      tasks: sortTasks(newLocalTasks),
+      tags: context.tasksTags.tags,
+    });
+  }, [context.tasksTags.tasks, context.tasksTags.tags]);
 
   const [selectedTag, setSelectedTag] = useState(null);
 
@@ -64,10 +74,13 @@ function Dashboard() {
   }
 
   function handleDeleteCard(task) {
-    if (task.tag.tasks == 1) {
-      context.dispatch({ tag: task.tag, type: "tagDelete" });
+    const currentTag = context.tasksTags.tags.find(
+      (tag) => tag.id == task.tagId
+    );
+    if (currentTag.tasks == 1) {
+      context.dispatch({ tag: currentTag, type: "tagDelete" });
     } else {
-      context.dispatch({ type: "tagIncrement", count: -1, tag: task.tag });
+      context.dispatch({ type: "tagIncrement", count: -1, tag: currentTag });
     }
     context.dispatch({ type: "taskDelete", task: task });
   }
@@ -79,21 +92,21 @@ function Dashboard() {
       newLocalTasks = context.tasksTags.tasks;
     } else {
       setSelectedTag(tagId);
-      newLocalTasks = localTasks.slice();
+      newLocalTasks = localTasksTags.tasks.slice();
       newLocalTasks.sort((a, b) => {
-        if (a.tag.id == tagId && b.tag.id == tagId) {
+        if (a.tagId == tagId && b.tagId == tagId) {
           return 0;
         }
-        if (a.tag.id != tagId && b.tag.id == tagId) {
+        if (a.tagId != tagId && b.tagId == tagId) {
           return 1;
         }
-        if (a.tag.id == tagId && b.tag.id != tagId) {
+        if (a.tagId == tagId && b.tagId != tagId) {
           return -1;
         }
       });
     }
     setIsClicked(!isClicked);
-    setLocalTasks(newLocalTasks);
+    setLocalTasksTags({ ...localTasksTags, tasks: newLocalTasks });
   }
 
   const [taskFields, setTaskFields] = useState(null);
@@ -107,9 +120,10 @@ function Dashboard() {
       <div style={{ display: "flex" }}>
         <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
         <div style={{ flexDirection: "column" }}>
-          {localTasks.map((task) => (
+          {localTasksTags.tasks.map((task) => (
             <Card
               task={task}
+              tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)}
               handleClickDone={handleClickDone}
               handleDeleteCard={handleDeleteCard}
               handleEditCard={handleEditCard}

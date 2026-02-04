@@ -17,8 +17,8 @@ export function Progress() {
   taggedEnt.forEach(([tagId, current], index) => {
     let allTasks = current.tasks.length;
     let completed = current.tasks.filter((t) => t.done).length;
-    let name = current.tasks[0].tag.name;
-    let color = current.tasks[0].tag.color;
+    let name = current.name;
+    let color = current.color;
 
     taskLines.push(
       <TaskLine {...{ name, allTasks, completed, color, maxLength }} />
@@ -32,8 +32,6 @@ export function Progress() {
       taskLines = [];
     }
   });
-
-  console.log(taskRows);
 
   return (
     <div>

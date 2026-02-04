@@ -1,5 +1,5 @@
 import { colors } from "../data";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTasksTags } from "./TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 
@@ -53,7 +53,6 @@ export function AddEditTag() {
     const tagColor = colors.find((color) => color.id == formObject.color);
 
     if (dropdownTarget in formObject) {
-      console.log("toDispatch");
       context.dispatch({
         type: "tagEdit",
         tag: {

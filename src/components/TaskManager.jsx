@@ -62,9 +62,9 @@ function tasksReducer(tasksTags, action) {
     }
 
     case "taskDelete": {
-      const newTasks = tasksTags.tasks.filter(
-        (task) => task.id != action.task.id
-      );
+      const newTasks = tasksTags.tasks.filter((task) => {
+        return task.id != action.task.id;
+      });
       return { ...tasksTags, tasks: newTasks };
     }
 
@@ -109,12 +109,14 @@ function tasksReducer(tasksTags, action) {
   }
 }
 
-function makeTagged(user_tasks) {
+function makeTagged(user_tasks, user_tags) {
   let tagged_tasks = {};
+  const tags = user_tags;
 
   for (let i = 0; i < user_tasks.length; i++) {
-    if (user_tasks[i].tag.id in tagged_tasks) {
-      const task = tagged_tasks[user_tasks[i].tag.id];
+    const currentTag = tags.find((t) => t.id == user_tasks[i].tagId);
+    if (user_tasks[i].tagId in tagged_tasks) {
+      const task = tagged_tasks[user_tasks[i].tagId];
 
       if (+YMDToDate(user_tasks[i].date) < +YMDToDate(task.first)) {
         task.first = user_tasks[i].date;
@@ -123,14 +125,15 @@ function makeTagged(user_tasks) {
         task.last = user_tasks[i].date;
       }
     } else {
-      tagged_tasks[user_tasks[i].tag.id] = {};
-      tagged_tasks[user_tasks[i].tag.id].first = user_tasks[i].date;
-      tagged_tasks[user_tasks[i].tag.id].last = user_tasks[i].date;
-      tagged_tasks[user_tasks[i].tag.id].tasks = [];
-      tagged_tasks[user_tasks[i].tag.id].color = user_tasks[i].tag.color;
+      tagged_tasks[user_tasks[i].tagId] = {};
+      tagged_tasks[user_tasks[i].tagId].first = user_tasks[i].date;
+      tagged_tasks[user_tasks[i].tagId].last = user_tasks[i].date;
+      tagged_tasks[user_tasks[i].tagId].tasks = [];
+      tagged_tasks[user_tasks[i].tagId].color = currentTag.color;
+      tagged_tasks[user_tasks[i].tagId].name = currentTag.name;
     }
 
-    tagged_tasks[user_tasks[i].tag.id].tasks.push(user_tasks[i]);
+    tagged_tasks[user_tasks[i].tagId].tasks.push(user_tasks[i]);
   }
 
   return tagged_tasks;

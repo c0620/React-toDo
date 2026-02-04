@@ -14,9 +14,10 @@ export function AddEditTask({ task }) {
 
   useEffect(() => {
     if (task) {
+      const tag = context.tasksTags.tags.find((tag) => tag.id == task.tagId);
       setUserInput({
         title: task.title,
-        tag: task.tag.name,
+        tag: tag.name,
         date: dateToYMD(new Date(task.date)),
       });
     }
@@ -28,7 +29,6 @@ export function AddEditTask({ task }) {
     e.preventDefault();
     const form = new FormData(formInput.current);
     const formObject = Object.fromEntries(form.entries());
-    let currentTag = tags.filter((tag) => +formObject.tag == tag.id)[0];
     let taskDate = formObject.date;
 
     if (task == null) {
@@ -36,7 +36,7 @@ export function AddEditTask({ task }) {
         type: "taskAdd",
         task: {
           date: taskDate,
-          tag: currentTag,
+          tagId: +formObject.tag,
           title: formObject.title,
           done: false,
         },
@@ -45,7 +45,7 @@ export function AddEditTask({ task }) {
       context.dispatch({
         type: "tagIncrement",
         tag: {
-          id: currentTag.id,
+          id: +formObject.tag,
         },
         count: 1,
       });
@@ -55,7 +55,7 @@ export function AddEditTask({ task }) {
         task: {
           id: task.id,
           date: taskDate,
-          tag: currentTag,
+          tagId: +formObject.tag,
           title: formObject.title,
           done: task.done,
         },
