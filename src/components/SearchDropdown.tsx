@@ -21,6 +21,8 @@ type SearchDropdownProps = {
   onChange: onChangeFunc;
   items: Array<userTag>;
   filterFunc: filterFunc;
+  isRequired: boolean;
+  optText?: string;
 };
 
 export function SearchDropdown({
@@ -30,12 +32,23 @@ export function SearchDropdown({
   onChange,
   items,
   filterFunc,
+  isRequired,
+  optText,
 }: SearchDropdownProps) {
-  const filteredItems = searchInput
+  let filteredItems = searchInput
     ? items.filter((item) =>
         filterFunc(item).toLowerCase().includes(searchInput.toLowerCase())
       )
     : items;
+  if (filteredItems.length == 0) {
+    if (isRequired) {
+      filteredItems = items;
+    } else {
+      return <div>{optText}</div>;
+    }
+  }
+
+  console.log(value);
 
   return (
     <div>
@@ -43,7 +56,7 @@ export function SearchDropdown({
         name={inputName}
         required
         value={value}
-        onChange={(e) => onChange("tag", { id: Number(e.target.value) })}
+        onChange={(e) => onChange(inputName, { id: Number(e.target.value) })}
       >
         {filteredItems.map((item) => {
           return (

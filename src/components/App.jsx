@@ -34,7 +34,7 @@ function Card({ task, handleClickDone, handleDeleteCard, handleEditCard }) {
 function Dashboard() {
   const context = useTasksTags();
 
-  let [localTasks, setLocalTasks] = useState(
+  const [localTasks, setLocalTasks] = useState(
     sortTasks(context.tasksTags.tasks)
   );
 
@@ -96,14 +96,10 @@ function Dashboard() {
     setLocalTasks(newLocalTasks);
   }
 
-  const [fields, setFields] = useState(null);
+  const [taskFields, setTaskFields] = useState(null);
 
   function handleEditCard(task) {
-    setFields({ ...task });
-  }
-
-  function handleEditField(field, value) {
-    setFields({ ...fields, [field]: value });
+    setTaskFields({ ...task });
   }
 
   return (
@@ -121,7 +117,7 @@ function Dashboard() {
           ))}
         </div>
       </div>
-      <AddEditTask task={fields} handleEditField={handleEditField} />
+      <AddEditTask task={taskFields} />
       <AddEditTag />
       <Progress />
     </>

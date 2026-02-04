@@ -1,4 +1,4 @@
-import { act, createContext, useContext, useMemo, useReducer } from "react";
+import { createContext, useContext, useMemo, useReducer } from "react";
 import { initialTasksTags, colors } from "../data";
 import { YMDToDate, dateToYMD } from "../utils/convertDate";
 
@@ -72,11 +72,11 @@ function tasksReducer(tasksTags, action) {
       const nextID = tasksTags.tags[tasksTags.tags.length - 1].id + 1;
       const nextTag = {
         id: nextID,
-        color: action.tag.color ? action.tag.color : colors[nextID],
+        color: action.tag.color,
         name: action.tag.name,
         tasks: 0,
       };
-      return { ...tasksTags, tags: [...tags, nextTag] };
+      return { ...tasksTags, tags: [...tasksTags.tags, nextTag] };
     }
 
     case "tagIncrement": {
@@ -92,7 +92,7 @@ function tasksReducer(tasksTags, action) {
     case "tagEdit": {
       const newTags = tasksTags.tags.map((tag) => {
         if (tag.id == action.tag.id) {
-          return { ...action.tag };
+          return { ...tag, ...action.tag };
         }
         return tag;
       });

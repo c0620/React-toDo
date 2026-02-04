@@ -1,16 +1,28 @@
 import { useTasksTags } from "./TaskManager";
 import { dateToYMD } from "../utils/convertDate";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SearchDropdown } from "./SearchDropdown";
 
-export function AddEditTask({ task, handleEditField }) {
+export function AddEditTask({ task }) {
   const context = useTasksTags();
-  const [searchInput, setSearchInput] = useState(null);
+  const [userInput, setUserInput] = useState({
+    title: "",
+    date: dateToYMD(new Date()),
+    tag: "",
+  });
   const formInput = useRef();
 
-  let tags = context.tasksTags.tags;
+  useEffect(() => {
+    if (task) {
+      setUserInput({
+        title: task.title,
+        tag: task.tag.name,
+        date: dateToYMD(new Date(task.date)),
+      });
+    }
+  }, [task]);
 
-  const d = task?.date ? dateToYMD(new Date(task.date)) : dateToYMD(new Date());
+  let tags = context.tasksTags.tags;
 
   function onTaskSubmit(e) {
     e.preventDefault();
@@ -19,7 +31,7 @@ export function AddEditTask({ task, handleEditField }) {
     let currentTag = tags.filter((tag) => +formObject.tag == tag.id)[0];
     let taskDate = formObject.date;
 
-    if (task.id == null) {
+    if (task == null) {
       context.dispatch({
         type: "taskAdd",
         task: {
@@ -51,6 +63,13 @@ export function AddEditTask({ task, handleEditField }) {
     }
   }
 
+  function handleTagChange(fieldName, tagObj) {
+    setUserInput({
+      ...userInput,
+      tag: tags.find((t) => t.id == tagObj.id).name,
+    });
+  }
+
   return (
     <div>
       <form onSubmit={onTaskSubmit} ref={formInput}>
@@ -59,24 +78,30 @@ export function AddEditTask({ task, handleEditField }) {
           type="text"
           name="title"
           required
-          value={task ? task.title : ""}
-          onChange={(e) => handleEditField("title", e.target.value)}
+          value={userInput.title}
+          onChange={(e) =>
+            setUserInput({ ...userInput, title: e.target.value })
+          }
         />
         <label>День выполнения задачи</label>
         <input
           type="date"
           name="date"
-          value={d}
-          onChange={(e) => handleEditField("date", e.target.value)}
+          value={userInput.date}
+          onChange={(e) => setUserInput({ ...userInput, date: e.target.value })}
         />
-        <input onChange={(e) => setSearchInput(e.target.value)}></input>
+        <input
+          onChange={(e) => setUserInput({ ...userInput, tag: e.target.value })}
+          value={userInput.tag}
+        ></input>
         <SearchDropdown
           inputName={"tag"}
-          value={task?.tag ? task.tag.id : ""}
-          onChange={handleEditField}
+          value={task?.tag?.id ?? 11}
+          onChange={handleTagChange}
           items={tags}
-          searchInput={searchInput}
+          searchInput={userInput.tag}
           filterFunc={(tag) => tag.name}
+          isRequired={true}
         />
         <button type="submit">добавить задачу</button>
       </form>
