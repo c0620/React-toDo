@@ -48,8 +48,6 @@ export function SearchDropdown({
     }
   }
 
-  console.log(value);
-
   return (
     <div>
       <select

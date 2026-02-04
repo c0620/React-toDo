@@ -1,19 +1,22 @@
 import { colors } from "../data";
+import { useMemo, useRef, useState } from "react";
+import { useTasksTags } from "./TaskManager";
+import { SearchDropdown } from "./SearchDropdown";
 
-export function AddEditTag({
-  tagId = null,
-  color = null,
-  name = null,
-  date = new Date(),
-  tag = null,
-  title = null,
-  done = false,
-}) {
+export function AddEditTag() {
+  const formInput = useRef();
+  const context = useTasksTags();
+  const tags = context.tasksTags.tags;
+
+  const [nameInput, setNameInput] = useState("");
+
+  const dropdownTarget = "tag";
+
   let colorPickers = colors.map((color) => (
     <>
       <style>
         {`
-      .C${color.main.replace("#", "")}[type='radio']::after {
+      .C${color.id}[type='radio']::after {
         width: 15px;
         height: 15px;
         border-radius: 15px;
@@ -27,26 +30,74 @@ export function AddEditTag({
         border: 2px solid white;
       }
 
-      .C${color.main.replace("#", "")}[type='radio']:checked::after {
+      .C${color.id}[type='radio']:checked::after {
         background-color: ${color.dark};
       }
     `}
       </style>
       <input
-        className={`C${color.main.replace("#", "")}`}
+        className={`C${color.id}`}
         type="radio"
         style={{ accentColor: color.main }}
-        value={[color.main, color.dark]}
+        value={color.id}
+        name="color"
       />
     </>
   ));
 
+  function onTagSubmit(e) {
+    e.preventDefault();
+    const form = new FormData(formInput.current);
+    const formObject = Object.fromEntries(form.entries());
+
+    const tagColor = colors.find((color) => color.id == formObject.color);
+
+    if (dropdownTarget in formObject) {
+      console.log("toDispatch");
+      context.dispatch({
+        type: "tagEdit",
+        tag: {
+          id: +formObject.tag,
+          color: tagColor,
+          name: formObject.name,
+        },
+      });
+    } else {
+      context.dispatch({
+        type: "tagAdd",
+        tag: {
+          color: tagColor,
+          name: formObject.name,
+        },
+      });
+    }
+  }
+
+  function onNameChange(fieldName, tagObj) {
+    setNameInput(tags.filter((t) => t.id == tagObj.id)[0].name);
+  }
+
   return (
     <div>
-      <form onSubmit={console.log("s_")}>
+      <form onSubmit={onTagSubmit} ref={formInput}>
         <label>Название цели</label>
+        <input
+          name="name"
+          onChange={(e) => setNameInput(e.target.value)}
+          value={nameInput}
+        />
+        <SearchDropdown
+          searchInput={nameInput}
+          inputName={dropdownTarget}
+          value={0}
+          onChange={onNameChange}
+          items={tags}
+          filterFunc={(tag) => tag.name}
+          isRequired={false}
+          optText="Добавление новой цели"
+        />
         {colorPickers}
-        <button type="submin">Добавить цель</button>
+        <button type="submit">добавить цель</button>
       </form>
     </div>
   );
