@@ -1,6 +1,6 @@
-import { colors } from "../data";
+import { colors } from "../../data";
 import { useRef, useState } from "react";
-import { useTasksTags } from "./TaskManager";
+import { useTasksTags } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 
 export function AddEditTag() {

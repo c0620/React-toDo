@@ -1,9 +1,11 @@
+import { dateToYMD } from "./utils/convertDate";
+
 export let month = {
   jan: [],
 };
 
 for (let i = 1; i <= 31; i++) {
-  month.jan.push(new Date(2026, 0, i));
+  month.jan.push(new Date(2026, 1, i));
 }
 
 export let colors = [
@@ -71,35 +73,35 @@ for (let i = 0; i < user_tags.length; i++) {
 let user_tasks = [
   {
     id: 0,
-    date: "2026-01-02",
+    date: dateToYMD(month.jan[3]),
     tagId: user_tags[1].id,
     title: "Запланировать задачу",
     done: false,
   },
   {
     id: 1,
-    date: "2026-01-09",
+    date: dateToYMD(month.jan[1]),
     tagId: user_tags[2].id,
     title: "Прочитать учебник по сетям целиком и полностью",
     done: true,
   },
   {
     id: 2,
-    date: "2026-01-19",
+    date: dateToYMD(month.jan[7]),
     tagId: user_tags[2].id,
     title: "Сделать пет-проект",
     done: false,
   },
   {
     id: 3,
-    date: "2026-01-19",
+    date: dateToYMD(month.jan[7]),
     tagId: user_tags[2].id,
     title: "Вторая задача на день пета",
     done: false,
   },
   {
     id: 4,
-    date: "2026-01-23",
+    date: dateToYMD(month.jan[23]),
     tagId: user_tags[2].id,
     title: "Задача на день после пета",
     done: false,

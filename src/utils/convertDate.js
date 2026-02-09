@@ -1,5 +1,4 @@
 export function YMDToDate(dateStr) {
-  console.log(dateStr);
   const [y, m, d] = dateStr.split("-").map(Number);
   return new Date(y, m - 1, d).getTime();
 }

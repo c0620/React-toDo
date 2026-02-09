@@ -1,5 +1,5 @@
-import { useTasksTags } from "./TaskManager";
-import { dateToYMD } from "../utils/convertDate";
+import { useTasksTags } from "../TaskManager";
+import { dateToYMD } from "../../utils/convertDate";
 import { useEffect, useRef, useState } from "react";
 import { SearchDropdown } from "./SearchDropdown";
 

@@ -1,41 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import "../App.css";
-import Gantt from "./Gantt";
-import { TaskManager, useTasksTags } from "./TaskManager";
-import { dateToYMD, YMDToDate } from "../utils/convertDate";
-import { AddEditTask } from "./TaskForm";
-import { AddEditTag } from "./TagForm";
-import { Progress } from "./Progress";
-
-function Card({
-  task,
-  tag,
-  handleClickDone,
-  handleDeleteCard,
-  handleEditCard,
-}) {
-  return (
-    <div className="card">
-      <div>
-        <div>
-          {task.date.toLocaleString("default", {
-            day: "numeric",
-            month: "long",
-          })}
-        </div>
-        <div style={{ color: tag.color.main }}>{tag.name}</div>
-      </div>
-      <h3>{task.title}</h3>
-      <div>
-        <button onClick={() => handleClickDone(task)}>
-          {task.done ? "Отменить" : "Выполнить"}
-        </button>
-        <button onClick={() => handleEditCard(task)}>edit</button>
-        <button onClick={() => handleDeleteCard(task)}>Удалить</button>
-      </div>
-    </div>
-  );
-}
+import styles from "./Dashboard.module.scss";
+import Gantt from "../Gantt/Gantt";
+import { TaskManager, useTasksTags } from "../TaskManager";
+import { dateToYMD, YMDToDate } from "../../utils/convertDate";
+import { AddEditTask } from "../forms/TaskForm";
+import { AddEditTag } from "../forms/TagForm";
+import { Progress } from "../Progress";
+import Card from "../TaskCard/TaskCard";
 
 function Dashboard() {
   const context = useTasksTags();
@@ -117,7 +88,7 @@ function Dashboard() {
 
   return (
     <>
-      <div style={{ display: "flex" }}>
+      <div className={styles.container}>
         <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
         <div style={{ flexDirection: "column" }}>
           {localTasksTags.tasks.map((task) => (

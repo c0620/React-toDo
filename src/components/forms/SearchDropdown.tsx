@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../Dashboard.module.scss";
 
 type onChangeFunc = {
   (field: string, value: string | number | object): void;

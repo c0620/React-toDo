@@ -1,0 +1,58 @@
+@import "/src/styles/variables.css";
+.gantt {
+  background-color: var(--l-card-bg-l);
+  border-radius: 20px;
+}
+
+.day {
+  font-family: "Nexa";
+  font-size: 20px;
+  color: var(--l-black);
+  width: 100%;
+  text-align: center;
+}
+
+.day-active {
+  @extend .day;
+  color: var(--l-white);
+  background-color: var(--l-black);
+  border-radius: 20px;
+}
+
+.switch-week {
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px var(--d-mgM) 0px var(--d-mgM);
+    align-items: center;
+  }
+  &__days {
+    display: flex;
+    width: 100%;
+    margin-bottom: var(--d-mgM);
+  }
+  &__button {
+    font-family: "Nexa";
+    font-size: 32px;
+    line-height: 20px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 22px;
+    background-color: var(--l-white);
+    color: var(--l-black);
+  }
+}
+
+.timeline {
+  gap: var(--d-mgM);
+}
+
+.timeline-tasks {
+  display: grid;
+  width: 910px;
+  height: 810px;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 50px);
+  row-gap: var(--d-mgS);
+}

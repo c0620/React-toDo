@@ -1,22 +1,23 @@
-import * as mock from "../data";
+import * as mock from "../../data";
 import { useState } from "react";
-import { useTaggedTasks } from "./TaskManager";
-import { YMDToDate, dateToYMD } from "../utils/convertDate";
+import { useTaggedTasks, useTasksTags } from "../TaskManager";
+import { YMDToDate, dateToYMD } from "../../utils/convertDate";
+import styles from "./Gantt.module.scss";
 
 export default function Gantt({ onTrackClick, selectedTag }) {
   const days = mock.month;
-  let taggedTasks = useTaggedTasks(); //!!!!
+  let taggedTasks = useTaggedTasks();
   const colors = mock.colors;
 
   return (
-    <div className="gantt">
+    <div className={styles.gantt}>
       <Timeline
         days={days}
         taggedTasks={taggedTasks}
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
-      <Filter tasks={taggedTasks} />
+      <Filter />
     </div>
   );
 }
@@ -36,7 +37,7 @@ function Timeline({ days, taggedTasks, onTrackClick, selectedTag }) {
   }
 
   return (
-    <div>
+    <div className={styles.timeline}>
       <SwitchWeek days={switchDays} handleDayIndex={handleDayIndex} />
 
       <TimelineTasks
@@ -52,13 +53,23 @@ function Timeline({ days, taggedTasks, onTrackClick, selectedTag }) {
 
 function SwitchWeek({ days, handleDayIndex }) {
   return (
-    <div className="filter">
-      <div>
-        <button onClick={() => handleDayIndex(-7)}>{"<"}</button>
+    <div className={styles.switchWeek}>
+      <div className={styles.switchWeekControls}>
+        <button
+          className={styles.switchWeekButton}
+          onClick={() => handleDayIndex(-7)}
+        >
+          {"<"}
+        </button>
         <h2>Январь 2026</h2>
-        <button onClick={() => handleDayIndex(7)}>{">"}</button>
+        <button
+          className={styles.switchWeekButton}
+          onClick={() => handleDayIndex(7)}
+        >
+          {">"}
+        </button>
       </div>
-      <div style={{ display: "flex" }}>
+      <div className={styles.switchWeekDays}>
         {days.map((day) => (
           <Day day={day} />
         ))}
@@ -78,11 +89,11 @@ function Track({
 }) {
   let rad;
   if (isStart && isEnd) {
-    rad = "20px";
+    rad = "25px";
   } else if (isStart) {
-    rad = "20px 0px 0px 20px";
+    rad = "25px 0px 0px 25px";
   } else if (isEnd) {
-    rad = "0px 20px 20px 0px";
+    rad = "0px 25px 25px 0px";
   } else {
     rad = "0px";
   }
@@ -114,20 +125,17 @@ function Day({ day }) {
 
   let currentDate = new Date(Date.now());
 
+  let style = styles.day;
+
   if (
     day.getFullYear() == currentDate.getFullYear() &&
     day.getMonth() == currentDate.getMonth() &&
     day.getDate() == currentDate.getDate()
   ) {
-    color = "red";
+    style = styles.dayActive;
   }
   return (
-    <div
-      style={{
-        color: color,
-        width: "85px",
-      }}
-    >
+    <div className={style}>
       {day.toLocaleString("default", {
         day: "numeric",
         weekday: "short",
@@ -136,13 +144,7 @@ function Day({ day }) {
   );
 }
 
-function TimelineTasks({
-  taggedTasks,
-  days,
-  onTrackClick,
-  selectedTag,
-  dayIndexStart,
-}) {
+function TimelineTasks({ taggedTasks, days, onTrackClick, selectedTag }) {
   function calculateDays(taggedTasks, days) {
     let tracks = [];
     let row = 0;
@@ -281,21 +283,16 @@ function TimelineTasks({
 
   allTracks = makeTracks(allTracks);
 
-  return (
-    <div
-      style={{
-        display: "grid",
-        width: "600px",
-        height: "300px",
-        gridTemplateColumns: "repeat(7, 1fr)",
-        gridTemplateRows: "repeat(7, 1fr)",
-      }}
-    >
-      {allTracks}
-    </div>
-  );
+  return <div className={styles.timelineTasks}>{allTracks}</div>;
 }
 
-function Filter({ tasks, handler }) {
-  return <h3>{tasks.length} задач</h3>;
+function Filter() {
+  const context = useTasksTags();
+  const tasksTags = context.tasksTags;
+  return (
+    <>
+      <h3>{tasksTags.tasks.length} задач</h3>
+      <h3>{tasksTags.tags.length} цели</h3>
+    </>
+  );
 }
