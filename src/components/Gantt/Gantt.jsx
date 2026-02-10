@@ -61,7 +61,7 @@ function SwitchWeek({ days, handleDayIndex }) {
         >
           {"<"}
         </button>
-        <h2>Январь 2026</h2>
+        <h2 className={styles.switchWeekMonth}>Январь 2026</h2>
         <button
           className={styles.switchWeekButton}
           onClick={() => handleDayIndex(7)}

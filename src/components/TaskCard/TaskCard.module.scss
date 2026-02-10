@@ -1,0 +1,52 @@
+@import "/src/styles/variables.css";
+.card {
+  width: 445px;
+  height: 188px;
+  padding: var(--d-mgM);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--l-card-bg-l);
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Nexa", sans-serif;
+    font-size: 20px;
+  }
+  &__date {
+  }
+  &__tag {
+    background-color: var(--tag-color);
+    border-radius: 20px;
+    padding: 0 var(--d-mgM) 0 var(--d-mgM);
+  }
+  &__title {
+    font-size: 28px;
+    line-height: 28px;
+  }
+  &__actions {
+    display: flex;
+    gap: var(--d-mgM);
+  }
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__button {
+    padding: 0 var(--d-mgM) 0 var(--d-mgM);
+    background-color: var(--l-white);
+    border-radius: 20px;
+    height: 32px;
+    font-family: "Nexa", sans-serif;
+    font-weight: normal;
+  }
+}
+
+.button-complete {
+  background-color: var(--l-black);
+  color: var(--l-white);
+}
+
+.button-cancel {
+  background-color: var(--l-white);
+}
