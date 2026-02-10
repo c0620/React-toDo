@@ -7,6 +7,13 @@
 @font-face {
   font-family: "Nexa";
   src: url("./assets/fonts/Nexa-Bold_0.otf");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Nexa";
+  src: url("./assets/fonts/Nexa-Regular_0.otf");
+  font-weight: normal;
 }
 
 :root {
