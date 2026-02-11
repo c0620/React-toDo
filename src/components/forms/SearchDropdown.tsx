@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "../Dashboard.module.scss";
+import React, { useState } from "react";
+import styles from "./Forms.module.scss";
 
 type onChangeFunc = {
   (field: string, value: string | number | object): void;
@@ -50,22 +50,20 @@ export function SearchDropdown({
   }
 
   return (
-    <div>
-      <select
-        name={inputName}
-        required
-        value={value}
-        onChange={(e) => onChange(inputName, { id: Number(e.target.value) })}
-      >
-        {filteredItems.map((item) => {
-          return (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          );
-        })}
-      </select>
-      ;
-    </div>
+    <select
+      className={styles.formSelect}
+      name={inputName}
+      required
+      value={value}
+      onChange={(e) => onChange(inputName, { id: Number(e.target.value) })}
+    >
+      {filteredItems.map((item) => {
+        return (
+          <option key={item.id} value={item.id}>
+            {item.name}
+          </option>
+        );
+      })}
+    </select>
   );
 }

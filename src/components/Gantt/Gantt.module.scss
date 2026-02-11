@@ -1,10 +1,10 @@
 @import "/src/styles/variables.css";
+@import "/src/styles/common.scss";
 .gantt {
-  background-color: var(--l-card-bg-l);
-  border-radius: 20px;
-  width: 910px;
-  height: 810px;
-  padding: var(--d-mgM);
+  @extend .underlay;
+  min-width: 320px;
+  width: 50%;
+  height: var(--d-sect-height);
 }
 
 .day {
@@ -32,6 +32,8 @@
   }
   &__month {
     font-size: 32px;
+    text-align: center;
+    line-height: 36px;
   }
   &__days {
     display: flex;

@@ -1,0 +1,85 @@
+@import "/src/styles/variables.css";
+@import "/src/styles/common.scss";
+.form {
+  @extend .underlay;
+  font-size: 28px;
+  &__set {
+    display: flex;
+    gap: var(--d-mgL);
+  }
+  &__label {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  &__label > *:first-child {
+    margin-top: var(--d-mgS);
+  }
+  &__button {
+    background-color: var(--l-black);
+    color: var(--l-white);
+    border-radius: var(--d-rad);
+    width: 100%;
+    height: 60px;
+    margin-top: var(--d-mgM);
+  }
+  &__tInput {
+    background-color: var(--l-white);
+    width: 100%;
+    border-radius: var(--d-rad);
+    height: 60px;
+    padding: 0 var(--d-mgM);
+  }
+  &__dInput {
+    background-color: var(--l-white);
+    border-radius: var(--d-rad) var(--d-rad) 0 0;
+    height: 60px;
+    padding: 0 var(--d-mgM);
+    border-bottom: 3px solid var(--l-card-bg-l);
+    width: 100%;
+    margin-top: var(--d-mgM);
+  }
+  &__select {
+    @extend .form__dInput;
+    border-radius: 0 0 var(--d-rad) var(--d-rad);
+    margin-top: 0;
+  }
+  &__colors {
+    display: flex;
+    justify-content: space-between;
+    max-width: 600px;
+  }
+}
+
+.tag-color[type="radio"] {
+  width: 60px;
+  height: 60px;
+  accent-color: var(--tag-color-dark);
+}
+
+.tag-color[type="radio"]::after {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  top: 0;
+  left: 0;
+  position: relative;
+  background-color: var(--tag-color);
+  content: "";
+  display: inline-block;
+  visibility: visible;
+}
+
+.tag-color[type="radio"]:checked::after {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  top: 0;
+  left: 0;
+  position: relative;
+  background-color: var(--tag-color-dark);
+  content: "";
+  display: inline-block;
+  visibility: visible;
+  border: 3px solid var(--l-black);
+}

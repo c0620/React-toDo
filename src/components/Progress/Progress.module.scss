@@ -1,0 +1,54 @@
+@import "/src/styles/variables.css";
+@import "/src/styles/common.scss";
+.progress {
+  @extend .underlay;
+  &__title {
+    font-size: 32px;
+    margin-bottom: var(--d-mgM);
+  }
+  &__tasks {
+    display: flex;
+    gap: var(--d-mgM);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--d-mgM);
+  width: 100%;
+}
+
+.task {
+  display: flex;
+  gap: var(--d-mgM);
+  &__all {
+    height: 40px;
+    width: var(--width-all);
+    background-color: var(--color-all);
+    position: relative;
+    border-radius: var(--d-rad);
+  }
+  &__title {
+    font-family: "Nexa", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  &__completed {
+    height: 100%;
+    width: var(--width-completed);
+    background-color: var(--color-completed);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    border-radius: var(--d-rad);
+  }
+  &__label {
+    position: absolute;
+    line-height: 40px;
+    z-index: 100;
+    padding-left: var(--d-mgM);
+    color: var(--l-black);
+  }
+}

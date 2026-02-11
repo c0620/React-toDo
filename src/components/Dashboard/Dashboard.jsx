@@ -3,9 +3,9 @@ import styles from "./Dashboard.module.scss";
 import Gantt from "../Gantt/Gantt";
 import { TaskManager, useTasksTags } from "../TaskManager";
 import { dateToYMD, YMDToDate } from "../../utils/convertDate";
-import { AddEditTask } from "../forms/TaskForm";
-import { AddEditTag } from "../forms/TagForm";
-import { Progress } from "../Progress";
+import { AddEditTask } from "../Forms/TaskForm";
+import { AddEditTag } from "../Forms/TagForm";
+import { Progress } from "../Progress/Progress";
 import Card from "../TaskCard/TaskCard";
 
 function Dashboard() {
@@ -87,10 +87,15 @@ function Dashboard() {
   }
 
   return (
-    <>
-      <div className={styles.container}>
+    <div className={styles.container}>
+      <div className={styles.navigation}>
+        <h1 className={styles.navigationHeader}>Планировщик задач</h1>
+        <div className={styles.navigationNav}>Дашборд +</div>
+      </div>
+
+      <section className={styles.dashboard}>
         <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
-        <div style={{ flexDirection: "column" }}>
+        <div className={styles.cards}>
           {localTasksTags.tasks.map((task) => (
             <Card
               task={task}
@@ -101,11 +106,15 @@ function Dashboard() {
             />
           ))}
         </div>
-      </div>
-      <AddEditTask task={taskFields} />
-      <AddEditTag />
-      <Progress />
-    </>
+      </section>
+      <section>
+        <Progress />
+        <div>
+          <AddEditTask task={taskFields} />
+          <AddEditTag />
+        </div>
+      </section>
+    </div>
   );
 }
 

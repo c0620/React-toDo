@@ -1,4 +1,5 @@
-import { useTaggedTasks } from "./TaskManager";
+import { useTaggedTasks } from "../TaskManager";
+import styles from "./Progress.module.scss";
 
 export function Progress() {
   const tagged = useTaggedTasks();
@@ -34,42 +35,36 @@ export function Progress() {
   });
 
   return (
-    <div>
-      <h2>Прогресс по задачам</h2>
-      <div style={{ display: "flex" }}>{taskRows}</div>
+    <div className={styles.progress}>
+      <h2 className={styles.progressTitle}>Прогресс по задачам</h2>
+      <div className={styles.progressTasks}>{taskRows}</div>
     </div>
   );
 }
 
 function TaskColumn({ children }) {
-  return <div style={{ width: "100%", border: "1px solid" }}>{children}</div>;
+  return <div className={styles.column}>{children}</div>;
 }
 
 function TaskLine({ name, allTasks, completed, color, maxLength }) {
   return (
-    <div>
-      <p>{name}</p>
+    <div className={styles.task}>
+      <h3 className={styles.taskTitle}>{name}</h3>
       <div
+        className={styles.taskAll}
         style={{
-          height: "30px",
-          width: (allTasks / maxLength) * 100 + "%",
-          backgroundColor: color.main,
-          position: "relative",
+          "--width-all": (allTasks / maxLength) * 100 + "%",
+          "--color-all": color.main,
         }}
       >
         <div
+          className={styles.taskCompleted}
           style={{
-            height: "30px",
-            width: (completed / allTasks) * 100 + "%",
-            backgroundColor: color.dark,
-            position: "absolute",
-            top: "0px",
-            left: "0px",
-            zIndex: 1,
+            "--width-completed": (completed / allTasks) * 100 + "%",
+            "--color-completed": color.dark,
           }}
-        >
-          {completed}
-        </div>
+        ></div>
+        <div className={styles.taskLabel}> {completed}</div>
       </div>
     </div>
   );

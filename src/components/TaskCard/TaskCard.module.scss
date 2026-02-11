@@ -1,17 +1,18 @@
 @import "/src/styles/variables.css";
+@import "/src/styles/common.scss";
 .card {
-  width: 445px;
-  height: 188px;
-  padding: var(--d-mgM);
+  @extend .underlay;
+  width: calc(50% - var(--d-mgM));
+  min-width: 320px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: var(--l-card-bg-l);
   &__info {
     display: flex;
     justify-content: space-between;
     font-family: "Nexa", sans-serif;
-    font-size: 20px;
+    font-size: 16px;
   }
   &__date {
   }
@@ -21,8 +22,8 @@
     padding: 0 var(--d-mgM) 0 var(--d-mgM);
   }
   &__title {
-    font-size: 28px;
-    line-height: 28px;
+    font-size: 24px;
+    line-height: 24px;
   }
   &__actions {
     display: flex;

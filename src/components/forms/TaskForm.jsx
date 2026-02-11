@@ -2,6 +2,7 @@ import { useTasksTags } from "../TaskManager";
 import { dateToYMD } from "../../utils/convertDate";
 import { useEffect, useRef, useState } from "react";
 import { SearchDropdown } from "./SearchDropdown";
+import styles from "./Forms.module.scss";
 
 export function AddEditTask({ task }) {
   const context = useTasksTags();
@@ -71,40 +72,59 @@ export function AddEditTask({ task }) {
   }
 
   return (
-    <div>
-      <form onSubmit={onTaskSubmit} ref={formInput}>
-        <label>Название задачи</label>
-        <input
-          type="text"
-          name="title"
-          required
-          value={userInput.title}
-          onChange={(e) =>
-            setUserInput({ ...userInput, title: e.target.value })
-          }
-        />
-        <label>День выполнения задачи</label>
-        <input
-          type="date"
-          name="date"
-          value={userInput.date}
-          onChange={(e) => setUserInput({ ...userInput, date: e.target.value })}
-        />
-        <input
-          onChange={(e) => setUserInput({ ...userInput, tag: e.target.value })}
-          value={userInput.tag}
-        ></input>
-        <SearchDropdown
-          inputName={"tag"}
-          value={task?.tag?.id ?? 11}
-          onChange={handleTagChange}
-          items={tags}
-          searchInput={userInput.tag}
-          filterFunc={(tag) => tag.name}
-          isRequired={true}
-        />
-        <button type="submit">добавить задачу</button>
-      </form>
-    </div>
+    <form className={styles.form} onSubmit={onTaskSubmit} ref={formInput}>
+      <fieldset className={styles.formSet}>
+        <label className={styles.formLabel}>
+          Название задачи
+          <input
+            className={styles.formTInput}
+            type="text"
+            name="title"
+            required
+            value={userInput.title}
+            onChange={(e) =>
+              setUserInput({ ...userInput, title: e.target.value })
+            }
+          />
+        </label>
+        <label className={styles.formLabel}>
+          День выполнения задачи
+          <input
+            className={styles.formTInput}
+            type="date"
+            name="date"
+            value={userInput.date}
+            onChange={(e) =>
+              setUserInput({ ...userInput, date: e.target.value })
+            }
+          />
+        </label>
+      </fieldset>
+      <fieldset className={styles.formSet}>
+        <label className={styles.formLabel}>
+          Цель
+          <input
+            className={styles.formDInput}
+            onChange={(e) =>
+              setUserInput({ ...userInput, tag: e.target.value })
+            }
+            value={userInput.tag}
+          ></input>
+          <SearchDropdown
+            inputName={"tag"}
+            value={task?.tag?.id ?? 11}
+            onChange={handleTagChange}
+            items={tags}
+            searchInput={userInput.tag}
+            filterFunc={(tag) => tag.name}
+            isRequired={true}
+          />
+        </label>
+      </fieldset>
+
+      <button className={styles.formButton} type="submit">
+        добавить задачу
+      </button>
+    </form>
   );
 }
