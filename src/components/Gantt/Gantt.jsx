@@ -7,7 +7,6 @@ import styles from "./Gantt.module.scss";
 export default function Gantt({ onTrackClick, selectedTag }) {
   const days = mock.month;
   let taggedTasks = useTaggedTasks();
-  const colors = mock.colors;
 
   return (
     <div className={styles.gantt}>

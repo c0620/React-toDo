@@ -1,12 +1,26 @@
 import { createContext, useContext, useMemo, useReducer } from "react";
-import { initialTasksTags, colors } from "../data";
-import { YMDToDate, dateToYMD } from "../utils/convertDate";
+import { initialTasksTags } from "../data.js";
+import { YMDToDate } from "../utils/convertDate.js";
+import type {
+  Tag,
+  TaggedTask,
+  TaggedTasks,
+  Task,
+  TasksTags,
+} from "../types/task.types.js";
+import type { Dispatch } from "react";
+import type { TaskAction } from "../types/task.types.js";
 
-const TasksContext = createContext(null);
+export type TaskContext = {
+  tasksTags: TasksTags;
+  dispatch: Dispatch<TaskAction>;
+};
 
-export function TaskManager({ children }) {
+const TasksContext = createContext<TaskContext | null>(null);
+
+export function TaskManager({ children }: { children: React.ReactNode }) {
   const [tasksTags, dispatch] = useReducer(tasksReducer, initialTasksTags);
-  console.log(tasksTags);
+
   return (
     <TasksContext.Provider value={{ tasksTags, dispatch }}>
       {children}
@@ -21,19 +35,20 @@ export function useTasksTags() {
 }
 
 export function useTaggedTasks() {
-  const { tasksTags } = useContext(TasksContext);
-
+  const { tasksTags } = useTasksTags();
   return useMemo(
     () => makeTagged(tasksTags.tasks, tasksTags.tags),
     [tasksTags.tasks, tasksTags.tags]
   );
 }
 
-function tasksReducer(tasksTags, action) {
+function tasksReducer(tasksTags: TasksTags, action: TaskAction): TasksTags {
   switch (action.type) {
     case "taskAdd": {
-      let newTask = action.task;
-      newTask.id = tasksTags.tasks[tasksTags.tasks.length - 1].id + 1;
+      const newTask = { ...action.task };
+      const lastTask = tasksTags.tasks.at(-1);
+
+      newTask.id = lastTask ? lastTask.id + 1 : 0;
 
       return {
         ...tasksTags,
@@ -69,13 +84,17 @@ function tasksReducer(tasksTags, action) {
     }
 
     case "tagAdd": {
-      const nextID = tasksTags.tags[tasksTags.tags.length - 1].id + 1;
-      const nextTag = {
-        id: nextID,
+      const nextTag: Tag = {
         color: action.tag.color,
         name: action.tag.name,
         tasks: 0,
+        id: 0,
       };
+
+      const lastTask = tasksTags.tasks.at(-1);
+
+      nextTag.id = lastTask ? lastTask.id + 1 : 0;
+
       return { ...tasksTags, tags: [...tasksTags.tags, nextTag] };
     }
 
@@ -105,36 +124,44 @@ function tasksReducer(tasksTags, action) {
     }
 
     default:
-      throw Error("unknown action with reducer");
+      throw Error("Reducer: unknown action type");
   }
 }
 
-function makeTagged(user_tasks, user_tags) {
-  let tagged_tasks = {};
-  const tags = user_tags;
+function makeTagged(userTasks: Array<Task>, userTags: Array<Tag>): TaggedTasks {
+  const taggedTasks: TaggedTasks = {};
+  const tags = userTags;
 
-  for (let i = 0; i < user_tasks.length; i++) {
-    const currentTag = tags.find((t) => t.id == user_tasks[i].tagId);
-    if (user_tasks[i].tagId in tagged_tasks) {
-      const task = tagged_tasks[user_tasks[i].tagId];
+  for (const task of userTasks) {
+    const currentTag = tags.find((t) => t.id === task.tagId);
+    if (!currentTag) {
+      throw Error("makeTagged: task without tag");
+    }
+    let tagged = taggedTasks[currentTag.id];
 
-      if (+YMDToDate(user_tasks[i].date) < +YMDToDate(task.first)) {
-        task.first = user_tasks[i].date;
+    if (tagged) {
+      const taggedFirstDate = YMDToDate(tagged.first);
+      const taggedLastDate = YMDToDate(tagged.last);
+      const taskDate = YMDToDate(task.date);
+
+      if (taggedFirstDate > taskDate) {
+        tagged.first = task.date;
       }
-      if (+YMDToDate(user_tasks[i].date) > +YMDToDate(task.last)) {
-        task.last = user_tasks[i].date;
+      if (taggedLastDate < taskDate) {
+        tagged.last = task.date;
       }
     } else {
-      tagged_tasks[user_tasks[i].tagId] = {};
-      tagged_tasks[user_tasks[i].tagId].first = user_tasks[i].date;
-      tagged_tasks[user_tasks[i].tagId].last = user_tasks[i].date;
-      tagged_tasks[user_tasks[i].tagId].tasks = [];
-      tagged_tasks[user_tasks[i].tagId].color = currentTag.color;
-      tagged_tasks[user_tasks[i].tagId].name = currentTag.name;
+      tagged = {
+        first: task.date,
+        last: task.date,
+        tasks: [],
+        color: currentTag.color,
+        name: currentTag.name,
+      };
     }
-
-    tagged_tasks[user_tasks[i].tagId].tasks.push(user_tasks[i]);
+    tagged.tasks.push(task);
+    taggedTasks[currentTag.id] = tagged;
   }
 
-  return tagged_tasks;
+  return taggedTasks;
 }
