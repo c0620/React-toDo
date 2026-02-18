@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useReducer } from "react";
 import { initialTasksTags } from "../data.js";
-import { YMDToDate } from "../utils/convertDate.js";
+import { YMDToDateMs } from "../utils/convertDate";
 import type {
   Tag,
   TaggedTask,
@@ -45,10 +45,11 @@ export function useTaggedTasks() {
 function tasksReducer(tasksTags: TasksTags, action: TaskAction): TasksTags {
   switch (action.type) {
     case "taskAdd": {
-      const newTask = { ...action.task };
       const lastTask = tasksTags.tasks.at(-1);
-
-      newTask.id = lastTask ? lastTask.id + 1 : 0;
+      const newTask: Task = {
+        id: lastTask ? lastTask.id + 1 : 0,
+        ...action.task,
+      };
 
       return {
         ...tasksTags,
@@ -140,9 +141,9 @@ function makeTagged(userTasks: Array<Task>, userTags: Array<Tag>): TaggedTasks {
     let tagged = taggedTasks[currentTag.id];
 
     if (tagged) {
-      const taggedFirstDate = YMDToDate(tagged.first);
-      const taggedLastDate = YMDToDate(tagged.last);
-      const taskDate = YMDToDate(task.date);
+      const taggedFirstDate = YMDToDateMs(tagged.first);
+      const taggedLastDate = YMDToDateMs(tagged.last);
+      const taskDate = YMDToDateMs(task.date);
 
       if (taggedFirstDate > taskDate) {
         tagged.first = task.date;
