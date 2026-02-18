@@ -1,35 +1,45 @@
 import { useTasksTags } from "../TaskManager";
 import { dateToYMD } from "../../utils/convertDate";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
+import type { Task, Tag } from "../../types/task.types";
+import type { FormDataType } from "../../types/forms.types";
 
-export function AddEditTask({ task }) {
+export function AddEditTask({ task }: { task: Task }) {
   const context = useTasksTags();
   const [userInput, setUserInput] = useState({
     title: "",
     date: dateToYMD(new Date()),
     tag: "",
   });
-  const formInput = useRef();
 
   useEffect(() => {
     if (task) {
       const tag = context.tasksTags.tags.find((tag) => tag.id == task.tagId);
-      setUserInput({
-        title: task.title,
-        tag: tag.name,
-        date: dateToYMD(new Date(task.date)),
-      });
+      if (tag) {
+        setUserInput({
+          title: task.title,
+          tag: tag.name,
+          date: dateToYMD(new Date(task.date)),
+        });
+      } else {
+        throw Error("TaskForm: task without tag");
+      }
     }
   }, [task]);
 
   let tags = context.tasksTags.tags;
 
-  function onTaskSubmit(e) {
+  function onTaskSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = new FormData(formInput.current);
-    const formObject = Object.fromEntries(form.entries());
+    const form = new FormData(e.currentTarget);
+    const formObject = Object.fromEntries(form.entries()) as FormDataType;
+
+    if (!formObject.tag || !formObject.title || !formObject.date) {
+      throw Error("TaskForm: missing Tag form fields");
+    }
+
     let taskDate = formObject.date;
 
     if (task == null) {
@@ -64,15 +74,18 @@ export function AddEditTask({ task }) {
     }
   }
 
-  function handleTagChange(fieldName, tagObj) {
-    setUserInput({
-      ...userInput,
-      tag: tags.find((t) => t.id == tagObj.id).name,
-    });
+  function handleTagChange(fieldName: string, tagObj: Pick<Tag, "id">) {
+    const inputTag = tags.find((t) => t.id == tagObj.id);
+    if (inputTag) {
+      setUserInput({
+        ...userInput,
+        tag: inputTag.name,
+      });
+    }
   }
 
   return (
-    <form className={styles.form} onSubmit={onTaskSubmit} ref={formInput}>
+    <form className={styles.form} onSubmit={onTaskSubmit}>
       <fieldset className={styles.formSet}>
         <label className={styles.formLabel}>
           Название задачи
@@ -112,7 +125,7 @@ export function AddEditTask({ task }) {
           ></input>
           <SearchDropdown
             inputName={"tag"}
-            value={task?.tag?.id ?? 11}
+            value={task?.tagId.toString() ?? "1"}
             onChange={handleTagChange}
             items={tags}
             searchInput={userInput.tag}

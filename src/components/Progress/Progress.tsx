@@ -1,12 +1,14 @@
+import type React from "react";
 import { useTaggedTasks } from "../TaskManager";
 import styles from "./Progress.module.scss";
+import type { ProgressTaskLine, InlineStyles } from "../../types/ui.types";
 
 export function Progress() {
   const tagged = useTaggedTasks();
   const maxCols = 2;
 
-  let taskRows = [];
-  let taskLines = [];
+  let taskRows: Array<React.ReactElement> = [];
+  let taskLines: Array<React.ReactElement> = [];
 
   let taggedCount = Object.keys(tagged).length;
   let linesCount = Math.ceil(taggedCount / maxCols);
@@ -42,27 +44,37 @@ export function Progress() {
   );
 }
 
-function TaskColumn({ children }) {
+function TaskColumn({ children }: React.PropsWithChildren) {
   return <div className={styles.column}>{children}</div>;
 }
 
-function TaskLine({ name, allTasks, completed, color, maxLength }) {
+function TaskLine({
+  name,
+  allTasks,
+  completed,
+  color,
+  maxLength,
+}: ProgressTaskLine) {
   return (
     <div className={styles.task}>
       <h3 className={styles.taskTitle}>{name}</h3>
       <div
         className={styles.taskAll}
-        style={{
-          "--width-all": (allTasks / maxLength) * 100 + "%",
-          "--color-all": color.main,
-        }}
+        style={
+          {
+            "--width-all": (allTasks / maxLength) * 100 + "%",
+            "--color-all": color.main,
+          } as InlineStyles
+        }
       >
         <div
           className={styles.taskCompleted}
-          style={{
-            "--width-completed": (completed / allTasks) * 100 + "%",
-            "--color-completed": color.dark,
-          }}
+          style={
+            {
+              "--width-completed": (completed / allTasks) * 100 + "%",
+              "--color-completed": color.dark,
+            } as InlineStyles
+          }
         ></div>
         <div className={styles.taskLabel}> {completed}</div>
       </div>

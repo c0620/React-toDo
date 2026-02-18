@@ -5,7 +5,7 @@ class DateError extends Error {
   }
 }
 
-export function YMDToDate(dateStr: string) {
+export function YMDToDateMs(dateStr: string) {
   const [y, m, d] = dateStr.split("-").map(Number);
   if (y && m && d) {
     return new Date(y, m - 1, d).getTime();

@@ -1,11 +1,12 @@
 import { colors } from "../../data";
-import { useRef, useState } from "react";
+import React, { useRef, useState, type FormEvent } from "react";
 import { useTasksTags } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
+import type { Tag } from "../../types/task.types";
+import type { TagColorStyles, FormDataType } from "../../types/forms.types";
 
 export function AddEditTag() {
-  const formInput = useRef();
   const context = useTasksTags();
   const tags = context.tasksTags.tags;
 
@@ -18,19 +19,33 @@ export function AddEditTag() {
       <input
         className={styles.tagColor}
         type="radio"
-        style={{ "--tag-color": color.main, "--tag-color-dark": color.dark }}
+        style={
+          {
+            "--tag-color": color.main,
+            "--tag-color-dark": color.dark,
+          } as TagColorStyles
+        }
         value={color.id}
         name="color"
       />
     </>
   ));
 
-  function onTagSubmit(e) {
+  function onTagSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = new FormData(formInput.current);
-    const formObject = Object.fromEntries(form.entries());
+    const form = new FormData(e.currentTarget);
+    const formObject = Object.fromEntries(form.entries()) as FormDataType;
 
-    const tagColor = colors.find((color) => color.id == formObject.color);
+    if (!formObject.color || !formObject.tag || !formObject.name) {
+      throw Error("Missing Tag form fields");
+    }
+
+    const colorId = formObject.color;
+    const tagColor = colors.find((color) => color.id == +colorId);
+
+    if (!tagColor) {
+      throw Error("TagForm: Wrong Tag Id");
+    }
 
     if (dropdownTarget in formObject) {
       context.dispatch({
@@ -52,12 +67,15 @@ export function AddEditTag() {
     }
   }
 
-  function onNameChange(fieldName, tagObj) {
-    setNameInput(tags.filter((t) => t.id == tagObj.id)[0].name);
+  function onNameChange(fieldName: string, tagObj: Pick<Tag, "id">) {
+    const inputTag = tags.filter((t) => t.id == tagObj.id)[0];
+    if (inputTag) {
+      setNameInput(inputTag.name);
+    }
   }
 
   return (
-    <form className={styles.form} onSubmit={onTagSubmit} ref={formInput}>
+    <form className={styles.form} onSubmit={onTagSubmit}>
       <fieldset className={styles.formSet}>
         <label className={styles.formLabel}>
           Название цели
@@ -71,10 +89,10 @@ export function AddEditTag() {
           <SearchDropdown
             searchInput={nameInput}
             inputName={dropdownTarget}
-            value={0}
+            value={"0"}
             onChange={onNameChange}
             items={tags}
-            filterFunc={(tag) => tag.name}
+            filterFunc={(arg: Tag) => arg.name}
             isRequired={false}
             optText="Добавление новой цели"
           />

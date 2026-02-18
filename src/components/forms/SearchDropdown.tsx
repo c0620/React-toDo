@@ -1,32 +1,20 @@
 import React, { useState } from "react";
 import styles from "./Forms.module.scss";
+import type { Tag } from "../../types/task.types";
+import type { onChangeFunc, filterFunc } from "../../types/forms.types";
 
-type onChangeFunc = {
-  (field: string, value: string | number | object): void;
-};
-
-type filterFunc = {
-  (item: object): string;
-};
-
-type userTag = {
-  id: number;
-  name: string;
-  tasks: number;
-};
-
-type SearchDropdownProps = {
+type SearchDropdownProps<T> = {
   searchInput: null | string;
   inputName: string;
   value: string;
   onChange: onChangeFunc;
-  items: Array<userTag>;
+  items: Array<Tag>;
   filterFunc: filterFunc;
   isRequired: boolean;
   optText?: string;
 };
 
-export function SearchDropdown({
+export function SearchDropdown<T>({
   searchInput,
   inputName,
   value,
@@ -35,7 +23,7 @@ export function SearchDropdown({
   filterFunc,
   isRequired,
   optText,
-}: SearchDropdownProps) {
+}: SearchDropdownProps<T>) {
   let filteredItems = searchInput
     ? items.filter((item) =>
         filterFunc(item).toLowerCase().includes(searchInput.toLowerCase())
