@@ -1,10 +1,30 @@
 import * as mock from "../../data";
 import { useState } from "react";
 import { useTaggedTasks, useTasksTags } from "../TaskManager";
-import { YMDToDate, dateToYMD } from "../../utils/convertDate";
+import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
+import type {
+  FillWeek,
+  Tag,
+  TaggedTask,
+  TaggedTasks,
+} from "../../types/task.types";
+import type {
+  GanttSelectedTag,
+  OnTrackClick,
+  SwitchWeekType,
+  TimelineTasksType,
+  TimelineType,
+  Week,
+} from "../../types/ui.types";
 
-export default function Gantt({ onTrackClick, selectedTag }) {
+export default function Gantt({
+  onTrackClick,
+  selectedTag,
+}: {
+  onTrackClick: OnTrackClick;
+  selectedTag: GanttSelectedTag;
+}) {
   const days = mock.month;
   let taggedTasks = useTaggedTasks();
 
@@ -21,13 +41,29 @@ export default function Gantt({ onTrackClick, selectedTag }) {
   );
 }
 
-function Timeline({ days, taggedTasks, onTrackClick, selectedTag }) {
+function Filter() {
+  const context = useTasksTags();
+  const tasksTags = context.tasksTags;
+  return (
+    <>
+      <h3>{tasksTags.tasks.length} задач</h3>
+      <h3>{tasksTags.tags.length} цели</h3>
+    </>
+  );
+}
+
+function Timeline({
+  days,
+  taggedTasks,
+  onTrackClick,
+  selectedTag,
+}: TimelineType) {
   let mock_days = days.jan;
 
   const [dayIndexStart, setDayIndexStart] = useState(0);
-  let switchDays = mock_days.slice(dayIndexStart, dayIndexStart + 7);
+  let switchDays = mock_days.slice(dayIndexStart, dayIndexStart + 7) as Week; //! temp
 
-  function handleDayIndex(i) {
+  function handleDayIndex(i: number) {
     if (dayIndexStart + i < 0) {
       setDayIndexStart(0);
     } else {
@@ -50,7 +86,7 @@ function Timeline({ days, taggedTasks, onTrackClick, selectedTag }) {
   );
 }
 
-function SwitchWeek({ days, handleDayIndex }) {
+function SwitchWeek({ days, handleDayIndex }: SwitchWeekType) {
   return (
     <div className={styles.switchWeek}>
       <div className={styles.switchWeekControls}>
@@ -77,49 +113,7 @@ function SwitchWeek({ days, handleDayIndex }) {
   );
 }
 
-function Track({
-  id,
-  position,
-  taggedTask,
-  isStart = false,
-  isEnd = false,
-  onTrackClick,
-  opacity,
-}) {
-  let rad;
-  if (isStart && isEnd) {
-    rad = "25px";
-  } else if (isStart) {
-    rad = "25px 0px 0px 25px";
-  } else if (isEnd) {
-    rad = "0px 25px 25px 0px";
-  } else {
-    rad = "0px";
-  }
-
-  let color = taggedTask.color.main;
-
-  if (taggedTask.task.reduce((d, t) => d && t.done, true)) {
-    color = taggedTask.color.dark;
-  }
-
-  return (
-    <div
-      onClick={() => {
-        onTrackClick(taggedTask.task[0].tagId);
-      }}
-      style={{
-        gridRow: Number(id) + 1,
-        gridColumn: position,
-        borderRadius: rad,
-        backgroundColor: color,
-        opacity: opacity,
-      }}
-    ></div>
-  );
-}
-
-function Day({ day }) {
+function Day({ day }: { day: Date }) {
   let color = "white";
 
   let currentDate = new Date(Date.now());
@@ -143,66 +137,66 @@ function Day({ day }) {
   );
 }
 
-function TimelineTasks({ taggedTasks, days, onTrackClick, selectedTag }) {
-  function calculateDays(taggedTasks, days) {
+function TimelineTasks({
+  taggedTasks,
+  days,
+  onTrackClick,
+  selectedTag,
+}: TimelineTasksType) {
+  function calculateDays(taggedTasks: TaggedTasks, days: Week) {
     let tracks = [];
     let row = 0;
 
-    for (let tag in taggedTasks) {
-      let tagged = taggedTasks[tag];
-      let fillWeek = {
-        lstart: false,
+    if (days.length != 7) {
+      throw Error("Gantt: wrong week range");
+    }
+    for (const [id, tagged] of Object.entries(taggedTasks)) {
+      let fillWeek: FillWeek = {
+        lstart: false, //add enum for flat/round end
         lend: false,
         tasks: [],
         row: row++,
         opacity:
-          selectedTag != null ? (tag == selectedTag ? "100%" : "30%") : "100%",
+          selectedTag != null ? (+id == selectedTag ? "100%" : "30%") : "100%",
       };
 
       let normDays = days.map((day) => dateToYMD(day));
       let normFirst = tagged.first;
       let normLast = tagged.last;
 
-      let dayFirst = YMDToDate(tagged.first);
-      let dayLast = YMDToDate(tagged.last);
+      let dayFirst = YMDToDateMs(tagged.first);
+      let dayLast = YMDToDateMs(tagged.last);
+
+      const startWeek = days[0];
+      const endWeek = days[6];
 
       if (normDays.indexOf(normFirst) != -1) {
+        //tag starts this week
         tagged.start = normDays.indexOf(normFirst) + 1;
       } else {
+        //tag starts not this week (earlier or later)
         if (+dayFirst < +days[0]) {
-          tagged.start = 1;
-          fillWeek.lstart = true;
-        } else continue;
+          //tag lasts longer then a week & starts before this week
+          tagged.start = 1; //from monday
+          fillWeek.lstart = true; //flat end
+        } else continue; //tag starts after this week
       }
 
       if (normDays.indexOf(normLast) != -1) {
+        //tag ends this week
         tagged.end = normDays.indexOf(normLast) + 1;
       } else {
+        //tag ends not this week
         if (+dayLast > +days[6]) {
-          tagged.end = 7;
-          fillWeek.lend = true;
-        } else continue;
+          //tag ends after this week
+          tagged.end = 7; //till sunday
+          fillWeek.lend = true; //flat end
+        } else continue; //tag ends before this week
       }
 
-      let weekTasks = tagged.tasks.filter(
-        (task) =>
-          +YMDToDate(task.date) >= +days[0] &&
-          +YMDToDate(task.date) <= +days[days.length - 1]
-      );
+      //if we're here, tagged tasks are in week's scope
 
-      if (weekTasks.length != 0) {
-        if (fillWeek.lstart && +YMDToDate(weekTasks[0].date) != +days[0]) {
-          let prev_ind = tagged.tasks.indexOf(weekTasks[0]);
-          let prev = tagged.tasks[prev_ind - 1];
-          weekTasks.unshift(prev);
-        }
-      } else {
-        let prevs = tagged.tasks.filter(
-          (task) => +YMDToDate(task.date) < +days[0]
-        );
-        let prev = prevs[prevs.length - 1];
-        weekTasks.unshift(prev);
-      }
+      //
 
       let i = 0;
       for (let s = tagged.start; s <= tagged.end; s++) {
@@ -210,12 +204,12 @@ function TimelineTasks({ taggedTasks, days, onTrackClick, selectedTag }) {
 
         if (
           i < weekTasks.length &&
-          +YMDToDate(weekTasks[i].date) <= +days[s - 1]
+          +YMDToDateMs(weekTasks[i].date) <= +days[s - 1]
         ) {
-          if (+YMDToDate(weekTasks[i].date) == +days[s - 1]) {
+          if (+YMDToDateMs(weekTasks[i].date) == +days[s - 1]) {
             while (
               i < weekTasks.length &&
-              +YMDToDate(weekTasks[i].date) == +days[s - 1]
+              +YMDToDateMs(weekTasks[i].date) == +days[s - 1]
             ) {
               dayTask.push(weekTasks[i]);
               i++;
@@ -242,6 +236,33 @@ function TimelineTasks({ taggedTasks, days, onTrackClick, selectedTag }) {
       tracks.push(fillWeek);
     }
     return tracks;
+  }
+
+  function d(
+    tasks: TaggedTask["tasks"],
+    fillWeek: FillWeek,
+    startWeek: Date,
+    endWeek: Date
+  ) {
+    let weekTasks = tasks.filter(
+      (task) =>
+        +YMDToDateMs(task.date) >= +startWeek &&
+        +YMDToDateMs(task.date) <= +endWeek
+    ); //tagged tasks from the scope of a week
+
+    if (weekTasks.length != 0) {
+      if (fillWeek.lstart && +YMDToDateMs(weekTasks[0].date) != +days[0]) {
+        //if tag starts before this week
+        let prev_ind = tasks.indexOf(weekTasks[0]);
+        let prev = tasks[prev_ind - 1];
+        weekTasks.unshift(prev);
+      }
+    } else {
+      let prevs = tasks.filter((task) => +YMDToDateMs(task.date) < +days[0]);
+      let prev = prevs[prevs.length - 1];
+      weekTasks.unshift(prev);
+    }
+    return weekTasks;
   }
 
   function makeTracks(calculated) {
@@ -285,13 +306,44 @@ function TimelineTasks({ taggedTasks, days, onTrackClick, selectedTag }) {
   return <div className={styles.timelineTasks}>{allTracks}</div>;
 }
 
-function Filter() {
-  const context = useTasksTags();
-  const tasksTags = context.tasksTags;
+function Track({
+  id,
+  position,
+  taggedTask,
+  isStart = false,
+  isEnd = false,
+  onTrackClick,
+  opacity,
+}) {
+  let rad;
+  if (isStart && isEnd) {
+    rad = "25px";
+  } else if (isStart) {
+    rad = "25px 0px 0px 25px";
+  } else if (isEnd) {
+    rad = "0px 25px 25px 0px";
+  } else {
+    rad = "0px";
+  }
+
+  let color = taggedTask.color.main;
+
+  if (taggedTask.task.reduce((d, t) => d && t.done, true)) {
+    color = taggedTask.color.dark;
+  }
+
   return (
-    <>
-      <h3>{tasksTags.tasks.length} задач</h3>
-      <h3>{tasksTags.tags.length} цели</h3>
-    </>
+    <div
+      onClick={() => {
+        onTrackClick(taggedTask.task[0].tagId);
+      }}
+      style={{
+        gridRow: Number(id) + 1,
+        gridColumn: position,
+        borderRadius: rad,
+        backgroundColor: color,
+        opacity: opacity,
+      }}
+    ></div>
   );
 }

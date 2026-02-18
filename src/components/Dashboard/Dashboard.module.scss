@@ -1,32 +1,7 @@
 @import "/src/styles/variables.css";
-.container {
-  padding: 0 var(--d-mgM);
-}
-
 .dashboard {
   display: flex;
   gap: var(--d-mgM);
-}
-
-.navigation {
-  display: flex;
-  padding-top: var(--d-mgM);
-  justify-content: space-between;
-  margin-bottom: var(--d-mgM);
-  align-items: center;
-  &__header {
-    font-size: 48px;
-  }
-  &__nav {
-    display: inline;
-    vertical-align: middle;
-    font-size: 28px;
-    line-height: 60px;
-    height: 60px;
-    background-color: var(--l-card-bg-l);
-    border-radius: var(--d-rad);
-    padding: 0 30px;
-  }
 }
 
 .cards {

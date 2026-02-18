@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.scss";
 import Gantt from "../Gantt/Gantt";
 import { TaskManager, useTasksTags } from "../TaskManager";
-import { dateToYMD, YMDToDate } from "../../utils/convertDate";
-import { AddEditTask } from "../Forms/TaskForm";
-import { AddEditTag } from "../Forms/TagForm";
-import { Progress } from "../Progress/Progress";
+import { dateToYMD, YMDToDateMs } from "../../utils/convertDate";
 import Card from "../TaskCard/TaskCard";
+import type { Tag, Task } from "../../types/task.types";
+import { GanttSelectedTag } from "../../types/ui.types";
 
 function Dashboard() {
   const context = useTasksTags();
@@ -26,28 +25,31 @@ function Dashboard() {
     });
   }, [context.tasksTags.tasks, context.tasksTags.tags]);
 
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedTag, setSelectedTag] = useState<GanttSelectedTag>(null);
 
-  function sortTasks(tasks) {
+  function sortTasks(tasks: Array<Task>) {
     return [...tasks].sort((a, b) => {
-      if (YMDToDate(a.date) > YMDToDate(b.date)) {
+      if (YMDToDateMs(a.date) > YMDToDateMs(b.date)) {
         return 1;
       }
-      if (YMDToDate(a.date) < YMDToDate(b.date)) {
+      if (YMDToDateMs(a.date) < YMDToDateMs(b.date)) {
         return -1;
       }
       return 0;
     });
   }
 
-  function handleClickDone(task) {
+  function handleClickDone(task: Task) {
     context.dispatch({ type: "taskToggleDone", task: task });
   }
 
-  function handleDeleteCard(task) {
+  function handleDeleteCard(task: Task) {
     const currentTag = context.tasksTags.tags.find(
       (tag) => tag.id == task.tagId
     );
+    if (!currentTag) {
+      throw Error("Dashboard: Wrong Task's tagId");
+    }
     if (currentTag.tasks == 1) {
       context.dispatch({ tag: currentTag, type: "tagDelete" });
     } else {
@@ -56,7 +58,7 @@ function Dashboard() {
     context.dispatch({ type: "taskDelete", task: task });
   }
 
-  function onTrackClick(tagId) {
+  function onTrackClick(tagId: Tag["id"]) {
     let newLocalTasks;
     if (isClicked) {
       setSelectedTag(null);
@@ -64,57 +66,41 @@ function Dashboard() {
     } else {
       setSelectedTag(tagId);
       newLocalTasks = localTasksTags.tasks.slice();
-      newLocalTasks.sort((a, b) => {
-        if (a.tagId == tagId && b.tagId == tagId) {
-          return 0;
-        }
+      newLocalTasks.sort((a: Task, b: Task): number => {
         if (a.tagId != tagId && b.tagId == tagId) {
           return 1;
         }
         if (a.tagId == tagId && b.tagId != tagId) {
           return -1;
         }
+        return 0;
       });
     }
     setIsClicked(!isClicked);
     setLocalTasksTags({ ...localTasksTags, tasks: newLocalTasks });
   }
 
-  const [taskFields, setTaskFields] = useState(null);
-
-  function handleEditCard(task) {
-    setTaskFields({ ...task });
-  }
-
   return (
-    <div className={styles.container}>
-      <div className={styles.navigation}>
-        <h1 className={styles.navigationHeader}>Планировщик задач</h1>
-        <div className={styles.navigationNav}>Дашборд +</div>
+    <section className={styles.dashboard}>
+      <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
+      <div className={styles.cards}>
+        {localTasksTags.tasks.map((task) => (
+          <Card
+            task={task}
+            tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)}
+            handleClickDone={handleClickDone}
+            handleDeleteCard={handleDeleteCard}
+          />
+        ))}
       </div>
-
-      <section className={styles.dashboard}>
-        <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
-        <div className={styles.cards}>
-          {localTasksTags.tasks.map((task) => (
-            <Card
-              task={task}
-              tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)}
-              handleClickDone={handleClickDone}
-              handleDeleteCard={handleDeleteCard}
-              handleEditCard={handleEditCard}
-            />
-          ))}
-        </div>
-      </section>
-      <section>
+      {/* <section>
         <Progress />
         <div>
           <AddEditTask task={taskFields} />
           <AddEditTag />
         </div>
-      </section>
-    </div>
+      </section> */}
+    </section>
   );
 }
 
