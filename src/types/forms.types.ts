@@ -1,4 +1,4 @@
-import type { Tag } from "../types/task.types";
+import type { Tag } from "./data.types";
 
 export type onChangeFunc = {
   (field: string, value: Pick<Tag, "id">): void;

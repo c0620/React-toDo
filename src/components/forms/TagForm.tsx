@@ -3,7 +3,7 @@ import React, { useRef, useState, type FormEvent } from "react";
 import { useTasksTags } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
-import type { Tag } from "../../types/task.types";
+import type { Tag } from "../../types/data.types";
 import type { TagColorStyles, FormDataType } from "../../types/forms.types";
 
 export function AddEditTag() {

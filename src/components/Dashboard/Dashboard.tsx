@@ -4,8 +4,8 @@ import Gantt from "../Gantt/Gantt";
 import { TaskManager, useTasksTags } from "../TaskManager";
 import { dateToYMD, YMDToDateMs } from "../../utils/convertDate";
 import Card from "../TaskCard/TaskCard";
-import type { Tag, Task } from "../../types/task.types";
-import { GanttSelectedTag } from "../../types/ui.types";
+import type { Tag, Task } from "../../types/data.types";
+import type { GanttSelectedTag } from "../../types/ui.types";
 
 function Dashboard() {
   const context = useTasksTags();
@@ -87,7 +87,7 @@ function Dashboard() {
         {localTasksTags.tasks.map((task) => (
           <Card
             task={task}
-            tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)}
+            tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)!}
             handleClickDone={handleClickDone}
             handleDeleteCard={handleDeleteCard}
           />

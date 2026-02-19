@@ -3,7 +3,7 @@ import { dateToYMD } from "../../utils/convertDate";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
-import type { Task, Tag } from "../../types/task.types";
+import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
 
 export function AddEditTask({ task }: { task: Task }) {

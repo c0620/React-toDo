@@ -1,5 +1,5 @@
 import { dateToYMD } from "./utils/convertDate.ts";
-import type { Month, Color, Tag, Task, TasksTags } from "./types/task.types.ts";
+import type { Month, Color, Tag, Task, TasksTags } from "./types/data.types.ts";
 
 export let month: Month = {
   jan: [],

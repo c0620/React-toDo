@@ -47,16 +47,6 @@ export type TaggedTask = {
   tasks: Array<Task>;
   color: Color;
   name: string;
-  start?: number;
-  end?: number;
-};
-
-export type FillWeek = {
-  lstart: boolean;
-  lend: boolean;
-  tasks: Array<Task>;
-  row: number;
-  opacity: `${number}%`;
 };
 
 export type TaggedTasks = Record<Tag["id"], TaggedTask>;

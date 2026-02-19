@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Forms.module.scss";
-import type { Tag } from "../../types/task.types";
+import type { Tag } from "../../types/data.types";
 import type { onChangeFunc, filterFunc } from "../../types/forms.types";
 
 type SearchDropdownProps<T> = {

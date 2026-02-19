@@ -7,9 +7,9 @@ import type {
   TaggedTasks,
   Task,
   TasksTags,
-} from "../types/task.types.js";
+} from "../types/data.types";
 import type { Dispatch } from "react";
-import type { TaskAction } from "../types/task.types.js";
+import type { TaskAction } from "../types/data.types";
 
 export type TaskContext = {
   tasksTags: TasksTags;

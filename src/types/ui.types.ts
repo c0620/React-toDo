@@ -1,5 +1,5 @@
-import type { Color, Month, Tag, TaggedTasks } from "./task.types";
-import type { Task } from "./task.types";
+import type { Color, Month, Tag, TaggedTasks } from "./data.types";
+import type { Task } from "./data.types";
 
 export type Week = [Date, Date, Date, Date, Date, Date, Date];
 
@@ -37,7 +37,7 @@ export interface TimelineType {
   selectedTag: GanttSelectedTag;
 }
 
-export interface TimelineTasksType {
+export interface TracksType {
   taggedTasks: TaggedTasks;
   days: Week;
   onTrackClick: OnTrackClick;
@@ -49,3 +49,31 @@ export interface SwitchWeekType {
   days: Week;
   handleDayIndex: (i: number) => void;
 }
+
+export type TaggedWeek = {
+  lstart: boolean;
+  lend: boolean;
+  tasks: Array<Task>;
+  start: number;
+  end: number;
+};
+
+export type GanttTrack = {
+  cells: Array<GanttCell>;
+  row: number;
+  opacity: `${number}%`;
+  color: Color;
+};
+
+export type GanttCell = {
+  isStart: boolean;
+  isEnd: boolean;
+  tasks: Array<Task>;
+  column: number;
+};
+
+export type TrackComponent = {
+  track: Omit<GanttTrack, "cells">; // row, opacity, color
+  cell: GanttCell; // isStart, isEnd, tasks
+  onTrackClick: OnTrackClick;
+};
