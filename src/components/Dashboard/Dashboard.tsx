@@ -11,23 +11,26 @@ function Dashboard() {
   const context = useTasksTags();
 
   const [localTasksTags, setLocalTasksTags] = useState({
-    tasks: sortTasks(context.tasksTags.tasks),
+    tasks: sortTasksByDate(context.tasksTags.tasks),
     tags: context.tasksTags.tags,
   });
 
-  const [isClicked, setIsClicked] = useState(false);
-
-  useEffect(() => {
-    let newLocalTasks = sortTasks(context.tasksTags.tasks);
-    setLocalTasksTags({
-      tasks: sortTasks(newLocalTasks),
-      tags: context.tasksTags.tags,
-    });
-  }, [context.tasksTags.tasks, context.tasksTags.tags]);
-
   const [selectedTag, setSelectedTag] = useState<GanttSelectedTag>(null);
 
-  function sortTasks(tasks: Array<Task>) {
+  useEffect(() => {
+    let newLocalTasks = sortTasksByDate(context.tasksTags.tasks);
+
+    if (selectedTag != null) {
+      newLocalTasks = filterSelectedTasks(selectedTag, newLocalTasks);
+    }
+
+    setLocalTasksTags({
+      tasks: newLocalTasks,
+      tags: context.tasksTags.tags,
+    });
+  }, [selectedTag, context.tasksTags.tasks, context.tasksTags.tags]);
+
+  function sortTasksByDate(tasks: Array<Task>) {
     return [...tasks].sort((a, b) => {
       if (YMDToDateMs(a.date) > YMDToDateMs(b.date)) {
         return 1;
@@ -58,26 +61,20 @@ function Dashboard() {
     context.dispatch({ type: "taskDelete", task: task });
   }
 
+  function filterSelectedTasks(tagId: Tag["id"], tasks: Array<Task>) {
+    let newLocalTasks = tasks.filter((task: Task) => task.tagId == tagId);
+    return newLocalTasks;
+  }
+
   function onTrackClick(tagId: Tag["id"]) {
     let newLocalTasks;
-    if (isClicked) {
+    if (selectedTag != null) {
       setSelectedTag(null);
       newLocalTasks = context.tasksTags.tasks;
     } else {
       setSelectedTag(tagId);
-      newLocalTasks = localTasksTags.tasks.slice();
-      newLocalTasks.sort((a: Task, b: Task): number => {
-        if (a.tagId != tagId && b.tagId == tagId) {
-          return 1;
-        }
-        if (a.tagId == tagId && b.tagId != tagId) {
-          return -1;
-        }
-        return 0;
-      });
+      newLocalTasks = filterSelectedTasks(tagId, context.tasksTags.tasks);
     }
-    setIsClicked(!isClicked);
-    setLocalTasksTags({ ...localTasksTags, tasks: newLocalTasks });
   }
 
   return (
