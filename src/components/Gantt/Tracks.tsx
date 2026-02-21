@@ -1,8 +1,10 @@
-import type { TracksType, TrackComponent } from "../../types/ui.types";
+import type { TracksType, Cell, GanttCell } from "../../types/ui.types";
 import type { TaggedTasks, TaggedTask, Task } from "../../types/data.types";
 import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
 import buildWeekGanttTracks from "../../utils/ganttModel";
+import { useEffect, useState, useRef, type ReactElement } from "react";
+import { createPortal } from "react-dom";
 
 export default function Tracks({
   taggedTasks,
@@ -16,15 +18,29 @@ export default function Tracks({
   for (const track of tracks) {
     track.cells.forEach((cell) =>
       componentTracks.push(
-        <Track track={track} cell={cell} onTrackClick={onTrackClick} />
+        <Cell
+          track={track}
+          cell={cell}
+          onTrackClick={onTrackClick}
+          selectedTag={selectedTag}
+        />
       )
     );
   }
   return <div className={styles.timelineTasks}>{componentTracks}</div>;
 }
 
-function Track({ onTrackClick, track, cell }: TrackComponent) {
+function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
   let rad: string;
+  const cellRef = useRef<HTMLDivElement>(null);
+
+  const [tooltip, setTooltip] = useState(false);
+
+  useEffect(() => {
+    if (cellRef.current === null) {
+    }
+  });
+
   if (cell.isStart && cell.isEnd) {
     rad = "25px";
   } else if (cell.isStart) {
@@ -42,17 +58,44 @@ function Track({ onTrackClick, track, cell }: TrackComponent) {
   }
 
   return (
-    <div
-      onClick={() => {
-        onTrackClick(cell.tasks[0]!.tagId);
-      }}
-      style={{
-        gridRow: track.row,
-        gridColumn: cell.column,
-        borderRadius: rad,
-        backgroundColor: color,
-        opacity: track.opacity,
-      }}
-    ></div>
+    <>
+      <div
+        onClick={() => {
+          onTrackClick(cell.tasks[0]!.tagId);
+        }}
+        ref={cellRef}
+        onMouseEnter={() => setTooltip(true)}
+        onMouseLeave={() => setTooltip(false)}
+        style={{
+          gridRow: track.tagId,
+          gridColumn: cell.column,
+          borderRadius: rad,
+          backgroundColor: color,
+          opacity: track.opacity,
+        }}
+      ></div>
+      {selectedTag &&
+        selectedTag == track.tagId &&
+        cellRef.current &&
+        tooltip &&
+        createPortal(
+          <div
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+              marginTop: "60px",
+              backgroundColor: "white",
+              padding: "10px",
+              borderRadius: "20px",
+              width: "300px",
+            }}
+          >
+            {cell.tasks.map((t) => (
+              <p>{t.title}</p>
+            ))}
+          </div>,
+          cellRef.current
+        )}
+    </>
   );
 }

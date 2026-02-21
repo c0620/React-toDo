@@ -27,11 +27,11 @@ export default function buildWeekGanttTracks(
     }
 
     buildSegmentTasks(tagged.tasks, segment, days);
-    const row = +id;
+    const tagId = +id;
     const track = buildGanttTrack(
       segment,
       days,
-      row,
+      tagId,
       tagged.color,
       isSelected,
       tagged.tasks
@@ -46,14 +46,14 @@ export default function buildWeekGanttTracks(
 function buildGanttTrack(
   segment: TaggedWeek,
   days: Week,
-  row: GanttTrack["row"],
+  tagId: GanttTrack["tagId"],
   color: GanttTrack["color"],
   isSelected: boolean,
   tasks: Array<Task>
 ): GanttTrack {
   const ganttTrack: GanttTrack = {
     cells: [],
-    row,
+    tagId,
     opacity: isSelected ? "100%" : "30%",
     color,
   };

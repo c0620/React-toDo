@@ -60,7 +60,7 @@ export type TaggedWeek = {
 
 export type GanttTrack = {
   cells: Array<GanttCell>;
-  row: number;
+  tagId: number;
   opacity: `${number}%`;
   color: Color;
 };
@@ -72,8 +72,9 @@ export type GanttCell = {
   column: number;
 };
 
-export type TrackComponent = {
+export type Cell = {
   track: Omit<GanttTrack, "cells">; // row, opacity, color
   cell: GanttCell; // isStart, isEnd, tasks
   onTrackClick: OnTrackClick;
+  selectedTag: GanttSelectedTag;
 };
