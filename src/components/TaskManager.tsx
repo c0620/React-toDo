@@ -92,9 +92,8 @@ function tasksReducer(tasksTags: TasksTags, action: TaskAction): TasksTags {
         id: 0,
       };
 
-      const lastTask = tasksTags.tasks.at(-1);
-
-      nextTag.id = lastTask ? lastTask.id + 1 : 0;
+      const lastTag = tasksTags.tags.at(-1);
+      nextTag.id = lastTag ? lastTag.id + 1 : 0;
 
       return { ...tasksTags, tags: [...tasksTags.tags, nextTag] };
     }
