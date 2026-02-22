@@ -2,6 +2,7 @@ import { colors } from "../../data";
 import React, { useRef, useState, type FormEvent } from "react";
 import { useTasksTags } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
+import clsx from "clsx";
 import styles from "./Forms.module.scss";
 import type { Tag } from "../../types/data.types";
 import type { TagColorStyles, FormDataType } from "../../types/forms.types";
@@ -10,9 +11,10 @@ export function AddEditTag() {
   const context = useTasksTags();
   const tags = context.tasksTags.tags;
 
-  const [nameInput, setNameInput] = useState("");
-
-  const dropdownTarget = "tag";
+  const [tagInput, setTagInput] = useState({
+    name: tags[0]?.name ?? null,
+    id: tags[0]?.id ?? null,
+  });
 
   let colorPickers = colors.map((color) => (
     <>
@@ -36,7 +38,7 @@ export function AddEditTag() {
     const form = new FormData(e.currentTarget);
     const formObject = Object.fromEntries(form.entries()) as FormDataType;
 
-    if (!formObject.color || !formObject.tag || !formObject.name) {
+    if (!formObject.color || !tagInput.name) {
       throw Error("Missing Tag form fields");
     }
 
@@ -47,13 +49,13 @@ export function AddEditTag() {
       throw Error("TagForm: Wrong Tag Id");
     }
 
-    if (dropdownTarget in formObject) {
+    if (tagInput.id !== null) {
       context.dispatch({
         type: "tagEdit",
         tag: {
-          id: +formObject.tag,
+          id: tagInput.id,
           color: tagColor,
-          name: formObject.name,
+          name: tagInput.name,
         },
       });
     } else {
@@ -61,16 +63,25 @@ export function AddEditTag() {
         type: "tagAdd",
         tag: {
           color: tagColor,
-          name: formObject.name,
+          name: tagInput.name,
         },
       });
     }
   }
 
-  function onNameChange(fieldName: string, tagObj: Pick<Tag, "id">) {
-    const inputTag = tags.filter((t) => t.id == tagObj.id)[0];
+  function onIdChange(fieldName: string, id: number) {
+    const inputTag = tags.filter((t) => t.id == id)[0];
     if (inputTag) {
-      setNameInput(inputTag.name);
+      setTagInput({ name: inputTag.name, id: inputTag.id });
+    }
+  }
+
+  function onNameChange(name: string) {
+    const inputTag = tags.filter((t) => t.name == name)[0];
+    if (inputTag) {
+      setTagInput({ name: inputTag.name, id: inputTag.id });
+    } else {
+      setTagInput({ name: name, id: null });
     }
   }
 
@@ -80,17 +91,19 @@ export function AddEditTag() {
         <label className={styles.formLabel}>
           Название цели
           <input
-            className={styles.formDInput}
+            className={clsx(
+              tagInput.id ? styles.formDInput : styles.formTInput
+            )}
             type="text"
             name="name"
-            onChange={(e) => setNameInput(e.target.value)}
-            value={nameInput}
+            onChange={(e) => onNameChange(e.target.value)}
+            value={tagInput.name ?? ""}
           />
           <SearchDropdown
-            searchInput={nameInput}
-            inputName={dropdownTarget}
-            value={"0"}
-            onChange={onNameChange}
+            searchInput={tagInput.name}
+            inputName={"tag"}
+            value={tagInput.id ?? 0}
+            onChange={onIdChange}
             items={tags}
             filterFunc={(arg: Tag) => arg.name}
             isRequired={false}

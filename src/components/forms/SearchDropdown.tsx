@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Forms.module.scss";
 import type { Tag } from "../../types/data.types";
 import type { onChangeFunc, filterFunc } from "../../types/forms.types";
@@ -6,11 +6,13 @@ import type { onChangeFunc, filterFunc } from "../../types/forms.types";
 type SearchDropdownProps<T> = {
   searchInput: null | string;
   inputName: string;
-  value: string;
+  value: number;
   onChange: onChangeFunc;
   items: Array<Tag>;
   filterFunc: filterFunc;
   isRequired: boolean;
+  completed?: boolean;
+  setCompleted?: Function;
   optText?: string;
 };
 
@@ -22,6 +24,8 @@ export function SearchDropdown<T>({
   items,
   filterFunc,
   isRequired,
+  completed,
+  setCompleted,
   optText,
 }: SearchDropdownProps<T>) {
   let filteredItems = searchInput
@@ -29,13 +33,31 @@ export function SearchDropdown<T>({
         filterFunc(item).toLowerCase().includes(searchInput.toLowerCase())
       )
     : items;
-  if (filteredItems.length == 0) {
-    if (isRequired) {
-      filteredItems = items;
-    } else {
-      return <div>{optText}</div>;
-    }
+
+  if (filteredItems.length == 0 && !isRequired) {
+    return <div>{optText}</div>;
   }
+
+  if (
+    filteredItems.length == 0 ||
+    (filteredItems.length == 1 &&
+      filteredItems[0]?.name.toLowerCase() == searchInput)
+  ) {
+    filteredItems = items;
+  }
+
+  useEffect(() => {
+    if (setCompleted) {
+      if (isRequired && !completed && filteredItems.length == 1) {
+        setCompleted(true);
+        onChange(inputName, filteredItems[0]!.id);
+      } else {
+        if (isRequired && searchInput == "") {
+          setCompleted(false);
+        }
+      }
+    }
+  }, [searchInput]);
 
   return (
     <select
@@ -43,7 +65,7 @@ export function SearchDropdown<T>({
       name={inputName}
       required
       value={value}
-      onChange={(e) => onChange(inputName, { id: Number(e.target.value) })}
+      onChange={(e) => onChange(inputName, Number(e.target.value))}
     >
       {filteredItems.map((item) => {
         return (

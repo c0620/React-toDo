@@ -29,6 +29,7 @@
     border-radius: var(--d-rad);
     height: 60px;
     padding: 0 var(--d-mgM);
+    outline: 0;
   }
   &__dInput {
     background-color: var(--l-white);
@@ -38,11 +39,14 @@
     border-bottom: 3px solid var(--l-card-bg-l);
     width: 100%;
     margin-top: var(--d-mgM);
+    color: var(--l-card-bg-d);
+    outline: 0;
   }
   &__select {
     @extend .form__dInput;
     border-radius: 0 0 var(--d-rad) var(--d-rad);
     margin-top: 0;
+    color: var(--l-black);
   }
   &__colors {
     display: flex;

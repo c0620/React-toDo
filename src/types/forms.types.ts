@@ -1,7 +1,7 @@
 import type { Tag } from "./data.types";
 
 export type onChangeFunc = {
-  (field: string, value: Pick<Tag, "id">): void;
+  (field: string, value: number): void;
 };
 
 export type FormDataType = Record<string, string>;

@@ -18,7 +18,7 @@ export default function UpdatePage() {
     <>
       <Progress />
       <AddEditTag />
-      {/* <AddEditTask /> */}
+      <AddEditTask task={null} />
     </>
   );
 }

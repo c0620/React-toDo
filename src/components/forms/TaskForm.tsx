@@ -6,13 +6,15 @@ import styles from "./Forms.module.scss";
 import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
 
-export function AddEditTask({ task }: { task: Task }) {
+export function AddEditTask({ task }: { task: Task | null }) {
   const context = useTasksTags();
   const [userInput, setUserInput] = useState({
     title: "",
     date: dateToYMD(new Date()),
-    tag: "",
+    tag: context.tasksTags.tags[0]?.name ?? "",
+    tagId: context.tasksTags.tags[0]?.id ?? 0,
   });
+  const [completed, setCompleted] = useState(true);
 
   useEffect(() => {
     if (task) {
@@ -22,6 +24,7 @@ export function AddEditTask({ task }: { task: Task }) {
           title: task.title,
           tag: tag.name,
           date: dateToYMD(new Date(task.date)),
+          tagId: tag.id,
         });
       } else {
         throw Error("TaskForm: task without tag");
@@ -74,12 +77,13 @@ export function AddEditTask({ task }: { task: Task }) {
     }
   }
 
-  function handleTagChange(fieldName: string, tagObj: Pick<Tag, "id">) {
-    const inputTag = tags.find((t) => t.id == tagObj.id);
+  function handleTagChange(fieldName: string, id: number) {
+    const inputTag = tags.find((t) => t.id == id);
     if (inputTag) {
       setUserInput({
         ...userInput,
         tag: inputTag.name,
+        tagId: inputTag.id,
       });
     }
   }
@@ -125,18 +129,20 @@ export function AddEditTask({ task }: { task: Task }) {
           ></input>
           <SearchDropdown
             inputName={"tag"}
-            value={task?.tagId.toString() ?? "1"}
+            value={userInput.tagId ?? task?.tagId ?? 1}
             onChange={handleTagChange}
             items={tags}
             searchInput={userInput.tag}
             filterFunc={(tag) => tag.name}
             isRequired={true}
+            completed={completed}
+            setCompleted={setCompleted}
           />
         </label>
       </fieldset>
 
       <button className={styles.formButton} type="submit">
-        добавить задачу
+        {task ? "добавить задачу и вернуться к дашборду" : "добавить задачу"}
       </button>
     </form>
   );
