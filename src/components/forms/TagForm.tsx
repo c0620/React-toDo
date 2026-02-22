@@ -92,7 +92,7 @@ export function AddEditTag() {
           Название цели
           <input
             className={clsx(
-              tagInput.id ? styles.formDInput : styles.formTInput
+              tagInput.id != null ? styles.formDInput : styles.formTInput
             )}
             type="text"
             name="name"
