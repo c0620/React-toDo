@@ -6,6 +6,7 @@ import { dateToYMD, YMDToDateMs } from "../../utils/convertDate";
 import Card from "../TaskCard/TaskCard";
 import type { Tag, Task } from "../../types/data.types";
 import type { GanttSelectedTag } from "../../types/ui.types";
+import { sortTasksByDate } from "../../utils/tasksFormatting";
 
 function Dashboard() {
   const context = useTasksTags();
@@ -29,18 +30,6 @@ function Dashboard() {
       tags: context.tasksTags.tags,
     });
   }, [selectedTag, context.tasksTags.tasks, context.tasksTags.tags]);
-
-  function sortTasksByDate(tasks: Array<Task>) {
-    return [...tasks].sort((a, b) => {
-      if (YMDToDateMs(a.date) > YMDToDateMs(b.date)) {
-        return 1;
-      }
-      if (YMDToDateMs(a.date) < YMDToDateMs(b.date)) {
-        return -1;
-      }
-      return 0;
-    });
-  }
 
   function handleClickDone(task: Task) {
     context.dispatch({ type: "taskToggleDone", task: task });

@@ -11,6 +11,7 @@ import type {
   Task,
 } from "../../types/data.types";
 import type { GanttSelectedTag, OnTrackClick } from "../../types/ui.types";
+import { sortTasksByDate } from "../../utils/tasksFormatting";
 
 export default function Gantt({
   onTrackClick,
@@ -20,7 +21,12 @@ export default function Gantt({
   selectedTag: GanttSelectedTag;
 }) {
   const days = mock.month;
-  let taggedTasks = useTaggedTasks();
+  const taggedTasks = useTaggedTasks();
+  for (const tagId in taggedTasks) {
+    if (taggedTasks[tagId]) {
+      taggedTasks[tagId].tasks = sortTasksByDate(taggedTasks[tagId]?.tasks);
+    }
+  }
 
   return (
     <div className={styles.gantt}>
