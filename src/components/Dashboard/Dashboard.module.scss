@@ -5,11 +5,11 @@
 }
 
 .cards {
-  display: inline-flex;
+  display: flex;
+  align-content: flex-start;
   flex-wrap: wrap;
   width: 50%;
   height: var(--d-sect-height);
-  align-self: start;
   gap: var(--d-mgM);
   overflow-y: scroll;
 }

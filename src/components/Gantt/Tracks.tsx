@@ -74,7 +74,7 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
           opacity: track.opacity,
         }}
       ></div>
-      {selectedTag &&
+      {selectedTag != null &&
         selectedTag == track.tagId &&
         cellRef.current &&
         tooltip &&
@@ -88,6 +88,7 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
               padding: "10px",
               borderRadius: "20px",
               width: "300px",
+              zIndex: "10",
             }}
           >
             {cell.tasks.map((t) => (
