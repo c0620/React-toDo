@@ -1,0 +1,10 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--d-mgM);
+}
+
+.forms {
+  display: flex;
+  gap: var(--d-mgM);
+}

@@ -1,0 +1,32 @@
+import { createBrowserRouter, useAsyncError } from "react-router";
+import DashboardPage from "./pages/DashboardPage";
+import UpdatePage, { updateLoader } from "./pages/UpdatePage/UpdatePage";
+import App from "./App";
+import ErrorPage from "./pages/ErrorPage";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    Component: App,
+    children: [
+      {
+        index: true,
+        Component: DashboardPage,
+        ErrorBoundary: ErrorPage,
+      },
+      {
+        path: "update/:type?/:id?",
+        Component: UpdatePage,
+        loader: updateLoader,
+        // action: updateAction,
+        ErrorBoundary: ErrorPage,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <div>Страница не найдена</div>,
+  },
+]);
+
+export type AppRouter = typeof router;

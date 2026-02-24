@@ -86,7 +86,7 @@ export function AddEditTag() {
   }
 
   return (
-    <form className={styles.form} onSubmit={onTagSubmit}>
+    <form className={styles.tag} onSubmit={onTagSubmit}>
       <fieldset className={styles.formSet}>
         <label className={styles.formLabel}>
           Название цели

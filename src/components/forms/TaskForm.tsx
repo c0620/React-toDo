@@ -5,6 +5,7 @@ import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
 import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
+import { Link } from "react-router";
 
 export function AddEditTask({ task }: { task: Task | null }) {
   const context = useTasksTags();
@@ -88,8 +89,22 @@ export function AddEditTask({ task }: { task: Task | null }) {
     }
   }
 
+  let button = (
+    <button className={styles.formButton} type="submit">
+      добавить задачу
+    </button>
+  );
+
+  if (task) {
+    button = (
+      <Link className={styles.formButton} to={"/"}>
+        изменить задачу и вернуться к дашборду
+      </Link>
+    );
+  }
+
   return (
-    <form className={styles.form} onSubmit={onTaskSubmit}>
+    <form className={styles.task} onSubmit={onTaskSubmit}>
       <fieldset className={styles.formSet}>
         <label className={styles.formLabel}>
           Название задачи
@@ -140,10 +155,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
           />
         </label>
       </fieldset>
-
-      <button className={styles.formButton} type="submit">
-        {task ? "добавить задачу и вернуться к дашборду" : "добавить задачу"}
-      </button>
+      {button}
     </form>
   );
 }

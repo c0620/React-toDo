@@ -3,6 +3,10 @@
 .form {
   @extend .underlay;
   font-size: 28px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--d-mgM);
   &__set {
     display: flex;
     gap: var(--d-mgL);
@@ -22,6 +26,9 @@
     width: 100%;
     height: 60px;
     margin-top: var(--d-mgM);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   &__tInput {
     background-color: var(--l-white);
@@ -53,6 +60,18 @@
     justify-content: space-between;
     max-width: 600px;
   }
+}
+
+.task {
+  @extend .form;
+  width: 100%;
+  min-width: 800px;
+}
+
+.tag {
+  @extend .form;
+  width: 100%;
+  max-width: 550px;
 }
 
 .tag-color[type="radio"] {

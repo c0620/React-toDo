@@ -1,7 +1,7 @@
-import { Routes, Route, Navigate, NavLink } from "react-router-dom";
+import { Routes, Route, Navigate, NavLink, Outlet } from "react-router-dom";
 
 import DashboardPage from "./pages/DashboardPage";
-import UpdatePage from "./pages/UpdatePage";
+import UpdatePage from "./pages/UpdatePage/UpdatePage";
 import "./styles/common.scss";
 import { Progress } from "./components/Progress/Progress";
 
@@ -19,15 +19,7 @@ export default function App() {
           </NavLink>
         </div>
       </div>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route
-          path="/update/:type?/:id?"
-          element={<UpdatePage />}
-          //   loader={editLoader}
-        />
-        <Route path="*" element={<Progress />} />
-      </Routes>
+      <Outlet />
     </div>
   );
 }

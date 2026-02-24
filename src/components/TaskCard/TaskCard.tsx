@@ -2,6 +2,7 @@ import styles from "./TaskCard.module.scss";
 import clsx from "clsx";
 import type { TaskCard, InlineStyles } from "../../types/ui.types";
 import { YMDToDateMs } from "../../utils/convertDate";
+import { Link } from "react-router";
 
 export default function Card({
   task,
@@ -39,19 +40,22 @@ export default function Card({
           {task.done ? "Отменить" : "Выполнить"}
         </button>
         <div className={styles.cardActions}>
-          <button
-            className={styles.cardButton}
-            onClick={() => {
-              throw new Error("Not Implemented");
-            }}
-          >
-            <img src="./src/assets/icons/edit.svg" alt="редактировать" />
-          </button>
+          <Link className={styles.cardButton} to={`update/task/${task.id}`}>
+            <img
+              className={styles.cardIcon}
+              src="./src/assets/icons/edit.svg"
+              alt="редактировать"
+            />
+          </Link>
           <button
             className={styles.cardButton}
             onClick={() => handleDeleteCard(task)}
           >
-            <img src="./src/assets/icons/close.svg" alt="удалить" />
+            <img
+              className={styles.cardIcon}
+              src="./src/assets/icons/close.svg"
+              alt="удалить"
+            />
           </button>
         </div>
       </div>
