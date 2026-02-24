@@ -15,22 +15,21 @@ export function AddEditTag() {
     name: tags[0]?.name ?? null,
     id: tags[0]?.id ?? null,
   });
+  const [match, setMatch] = useState(true);
 
   let colorPickers = colors.map((color) => (
-    <>
-      <input
-        className={styles.tagColor}
-        type="radio"
-        style={
-          {
-            "--tag-color": color.main,
-            "--tag-color-dark": color.dark,
-          } as TagColorStyles
-        }
-        value={color.id}
-        name="color"
-      />
-    </>
+    <input
+      className={styles.tagColor}
+      type="radio"
+      style={
+        {
+          "--tag-color": color.main,
+          "--tag-color-dark": color.dark,
+        } as TagColorStyles
+      }
+      value={color.id}
+      name="color"
+    />
   ));
 
   function onTagSubmit(e: FormEvent<HTMLFormElement>) {
@@ -70,18 +69,28 @@ export function AddEditTag() {
   }
 
   function onIdChange(fieldName: string, id: number) {
-    const inputTag = tags.filter((t) => t.id == id)[0];
+    const inputTag = tags.find((t) => t.id == id);
     if (inputTag) {
       setTagInput({ name: inputTag.name, id: inputTag.id });
     }
   }
 
   function onNameChange(name: string) {
-    const inputTag = tags.filter((t) => t.name == name)[0];
-    if (inputTag) {
-      setTagInput({ name: inputTag.name, id: inputTag.id });
-    } else {
+    const matches = tags.filter(
+      (tag) => tag.name.toLowerCase().indexOf(name.toLowerCase()) == 0
+    );
+
+    if (matches.length == 0) {
+      setMatch(false);
       setTagInput({ name: name, id: null });
+    } else {
+      setMatch(true);
+      const inputTag = matches.find((t) => t.name == name);
+      if (inputTag) {
+        setTagInput({ name: inputTag.name, id: inputTag.id });
+      } else {
+        setTagInput({ name: name, id: null });
+      }
     }
   }
 
@@ -91,9 +100,7 @@ export function AddEditTag() {
         <label className={styles.formLabel}>
           Название цели
           <input
-            className={clsx(
-              tagInput.id != null ? styles.formDInput : styles.formTInput
-            )}
+            className={clsx(match ? styles.formDInput : styles.formTInput)}
             type="text"
             name="name"
             onChange={(e) => onNameChange(e.target.value)}
@@ -107,7 +114,7 @@ export function AddEditTag() {
             items={tags}
             filterFunc={(arg: Tag) => arg.name}
             isRequired={false}
-            optText="Добавление новой цели"
+            optText="Добавление нового тега"
           />
         </label>
       </fieldset>

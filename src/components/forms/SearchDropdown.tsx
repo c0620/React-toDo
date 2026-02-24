@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import styles from "./Forms.module.scss";
 import type { Tag } from "../../types/data.types";
 import type { onChangeFunc, filterFunc } from "../../types/forms.types";
@@ -28,23 +33,21 @@ export function SearchDropdown<T>({
   setCompleted,
   optText,
 }: SearchDropdownProps<T>) {
-  let filteredItems = searchInput
-    ? items.filter((item) =>
-        filterFunc(item).toLowerCase().includes(searchInput.toLowerCase())
+  const userInput = searchInput?.toLowerCase();
+  const filteredItems = userInput
+    ? items.filter(
+        (item) => filterFunc(item).toLowerCase().indexOf(userInput) == 0
       )
     : items;
-
-  if (filteredItems.length == 0 && !isRequired) {
+  if (filteredItems.length == 0 && searchInput != "" && !isRequired) {
     return <div>{optText}</div>;
   }
-
-  if (
+  const searchOptions =
     filteredItems.length == 0 ||
     (filteredItems.length == 1 &&
-      filteredItems[0]?.name.toLowerCase() == searchInput)
-  ) {
-    filteredItems = items;
-  }
+      filteredItems[0]?.name.toLowerCase() == userInput)
+      ? items
+      : filteredItems;
 
   useEffect(() => {
     if (setCompleted) {
@@ -57,7 +60,7 @@ export function SearchDropdown<T>({
         }
       }
     }
-  }, [searchInput]);
+  }, [searchInput, filteredItems]);
 
   return (
     <select
@@ -67,7 +70,7 @@ export function SearchDropdown<T>({
       value={value}
       onChange={(e) => onChange(inputName, Number(e.target.value))}
     >
-      {filteredItems.map((item) => {
+      {searchOptions.map((item) => {
         return (
           <option key={item.id} value={item.id}>
             {item.name}

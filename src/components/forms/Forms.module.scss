@@ -46,8 +46,13 @@
     border-bottom: 3px solid var(--l-card-bg-l);
     width: 100%;
     margin-top: var(--d-mgM);
-    color: var(--l-card-bg-d);
+    color: var(--l-black);
     outline: 0;
+  }
+  &__dError {
+    @extend .form__dInput;
+    border: 3px solid var(--l-error);
+    color: var(--l-card-bg-d);
   }
   &__select {
     @extend .form__dInput;

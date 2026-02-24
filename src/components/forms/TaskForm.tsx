@@ -6,32 +6,30 @@ import styles from "./Forms.module.scss";
 import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
 import { Link } from "react-router";
+import clsx from "clsx";
 
 export function AddEditTask({ task }: { task: Task | null }) {
   const context = useTasksTags();
+  let tag = context.tasksTags.tags[0];
+
+  if (!tag) {
+    return <div>Добавьте первую цель</div>;
+  }
+
+  if (task) {
+    tag = context.tasksTags.tags.find((tag) => tag.id == task.tagId);
+    if (!tag) {
+      throw Error("TaskForm: task without tag");
+    }
+  }
   const [userInput, setUserInput] = useState({
-    title: "",
-    date: dateToYMD(new Date()),
-    tag: context.tasksTags.tags[0]?.name ?? "",
-    tagId: context.tasksTags.tags[0]?.id ?? 0,
+    title: task ? task.title : "",
+    date: task ? task.date : dateToYMD(new Date()),
+    tag: tag?.name,
+    tagId: tag?.id ?? 0,
   });
   const [completed, setCompleted] = useState(true);
-
-  useEffect(() => {
-    if (task) {
-      const tag = context.tasksTags.tags.find((tag) => tag.id == task.tagId);
-      if (tag) {
-        setUserInput({
-          title: task.title,
-          tag: tag.name,
-          date: dateToYMD(new Date(task.date)),
-          tagId: tag.id,
-        });
-      } else {
-        throw Error("TaskForm: task without tag");
-      }
-    }
-  }, [task]);
+  const [match, setMatch] = useState(true);
 
   let tags = context.tasksTags.tags;
 
@@ -78,7 +76,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
     }
   }
 
-  function handleTagChange(fieldName: string, id: number) {
+  function handleTagSelect(fieldName: string, id: number) {
     const inputTag = tags.find((t) => t.id == id);
     if (inputTag) {
       setUserInput({
@@ -86,21 +84,19 @@ export function AddEditTask({ task }: { task: Task | null }) {
         tag: inputTag.name,
         tagId: inputTag.id,
       });
+      setMatch(true);
     }
   }
 
-  let button = (
-    <button className={styles.formButton} type="submit">
-      добавить задачу
-    </button>
-  );
-
-  if (task) {
-    button = (
-      <Link className={styles.formButton} to={"/"}>
-        изменить задачу и вернуться к дашборду
-      </Link>
+  function handleTagInput(name: string) {
+    let matches = tags.filter(
+      (tag) => tag.name.toLowerCase().indexOf(name.toLowerCase()) == 0
     );
+
+    matches.length != 0 ? setMatch(true) : setMatch(false);
+    console.log(match);
+
+    setUserInput({ ...userInput, tag: name });
   }
 
   return (
@@ -136,16 +132,15 @@ export function AddEditTask({ task }: { task: Task | null }) {
         <label className={styles.formLabel}>
           Цель
           <input
-            className={styles.formDInput}
-            onChange={(e) =>
-              setUserInput({ ...userInput, tag: e.target.value })
-            }
+            name="tag"
+            className={clsx(match ? styles.formDInput : styles.formDError)}
+            onChange={(e) => handleTagInput(e.target.value)}
             value={userInput.tag}
           ></input>
           <SearchDropdown
             inputName={"tag"}
             value={userInput.tagId ?? task?.tagId ?? 1}
-            onChange={handleTagChange}
+            onChange={handleTagSelect}
             items={tags}
             searchInput={userInput.tag}
             filterFunc={(tag) => tag.name}
@@ -155,7 +150,9 @@ export function AddEditTask({ task }: { task: Task | null }) {
           />
         </label>
       </fieldset>
-      {button}
+      <button className={styles.formButton} type="submit">
+        {task ? "добавить задачу" : "изменить задачу и вернуться к дашборду"}
+      </button>
     </form>
   );
 }
