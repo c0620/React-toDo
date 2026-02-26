@@ -5,7 +5,7 @@ import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
 import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import clsx from "clsx";
 
 export function AddEditTask({ task }: { task: Task | null }) {
@@ -30,6 +30,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
   });
   const [completed, setCompleted] = useState(true);
   const [match, setMatch] = useState(true);
+  const navigate = useNavigate();
 
   let tags = context.tasksTags.tags;
 
@@ -73,6 +74,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
           done: task.done,
         },
       });
+      navigate("/");
     }
   }
 
@@ -151,7 +153,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
         </label>
       </fieldset>
       <button className={styles.formButton} type="submit">
-        {task ? "добавить задачу" : "изменить задачу и вернуться к дашборду"}
+        {task ? "изменить задачу и вернуться к дашборду" : "добавить задачу"}
       </button>
     </form>
   );
