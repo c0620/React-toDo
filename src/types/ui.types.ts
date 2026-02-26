@@ -31,7 +31,6 @@ export interface TaskCard {
 }
 
 export interface TimelineType {
-  days: Month; // !temp
   taggedTasks: TaggedTasks;
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
@@ -42,12 +41,12 @@ export interface TracksType {
   days: Week;
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
-  dayIndexStart: number;
 }
 
 export interface SwitchWeekType {
   days: Week;
   handleDayIndex: (i: number) => void;
+  dayIndex: number;
 }
 
 export type TaggedWeek = {

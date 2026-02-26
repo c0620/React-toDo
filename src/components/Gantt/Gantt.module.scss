@@ -22,6 +22,11 @@
   border-radius: 20px;
 }
 
+.weekend {
+  @extend .day;
+  color: var(--l-red);
+}
+
 .switch-week {
   &__controls {
     display: flex;
@@ -34,6 +39,7 @@
     font-size: 32px;
     text-align: center;
     line-height: 36px;
+    text-transform: capitalize;
   }
   &__days {
     display: flex;

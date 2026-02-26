@@ -3,34 +3,29 @@ import type { Week, SwitchWeekType } from "../../types/ui.types";
 import { useState } from "react";
 import styles from "./Gantt.module.scss";
 import Tracks from "./Tracks";
+import { buildWeek } from "../../utils/ganttModel";
 
 export default function Timeline({
-  days,
   taggedTasks,
   onTrackClick,
   selectedTag,
 }: TimelineType) {
-  let mock_days = days.jan;
-
+  const monday = new Date();
   const [dayIndexStart, setDayIndexStart] = useState(0);
-  let switchDays = mock_days.slice(dayIndexStart, dayIndexStart + 7) as Week; //! temp
-
-  function handleDayIndex(i: number) {
-    if (dayIndexStart + i < 0) {
-      setDayIndexStart(0);
-    } else {
-      setDayIndexStart(dayIndexStart + i);
-    }
-  }
+  monday.setDate(monday.getDate() + dayIndexStart);
+  const switchDays = buildWeek(monday);
 
   return (
     <div className={styles.timeline}>
-      <SwitchWeek days={switchDays} handleDayIndex={handleDayIndex} />
+      <SwitchWeek
+        days={switchDays}
+        handleDayIndex={setDayIndexStart}
+        dayIndex={dayIndexStart}
+      />
 
       <Tracks
         taggedTasks={taggedTasks}
         days={switchDays}
-        dayIndexStart={dayIndexStart}
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
@@ -38,20 +33,33 @@ export default function Timeline({
   );
 }
 
-function SwitchWeek({ days, handleDayIndex }: SwitchWeekType) {
+function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
+  const months: string[] = days.reduce<string[]>((acc, day, index, days) => {
+    if (index != 0 && days[index - 1]?.getFullYear() != day.getFullYear()) {
+      acc[acc.length - 1] += " " + days[index - 1]?.getFullYear();
+    }
+    if (index == 0 || days[index - 1]?.getMonth() != day.getMonth()) {
+      acc.push(day.toLocaleDateString(undefined, { month: "long" }));
+    }
+
+    return acc;
+  }, []);
+
   return (
     <div className={styles.switchWeek}>
       <div className={styles.switchWeekControls}>
         <button
           className={styles.switchWeekButton}
-          onClick={() => handleDayIndex(-7)}
+          onClick={() => handleDayIndex(dayIndex - 7)}
         >
           {"<"}
         </button>
-        <h2 className={styles.switchWeekMonth}>Январь 2026</h2>
+        <h2 className={styles.switchWeekMonth}>
+          {months.join(" — ")} {days[6].getFullYear()}
+        </h2>
         <button
           className={styles.switchWeekButton}
-          onClick={() => handleDayIndex(7)}
+          onClick={() => handleDayIndex(dayIndex + 7)}
         >
           {">"}
         </button>
@@ -66,11 +74,12 @@ function SwitchWeek({ days, handleDayIndex }: SwitchWeekType) {
 }
 
 function Day({ day }: { day: Date }) {
-  let color = "white";
-
   let currentDate = new Date(Date.now());
 
   let style = styles.day;
+  if (day.getDay() == 0 || day.getDay() == 6) {
+    style = styles.weekend;
+  }
 
   if (
     day.getFullYear() == currentDate.getFullYear() &&

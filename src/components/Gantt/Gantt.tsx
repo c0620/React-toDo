@@ -20,7 +20,6 @@ export default function Gantt({
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
 }) {
-  const days = mock.month;
   const taggedTasks = useTaggedTasks();
   for (const tagId in taggedTasks) {
     if (taggedTasks[tagId]) {
@@ -31,7 +30,6 @@ export default function Gantt({
   return (
     <div className={styles.gantt}>
       <Timeline
-        days={days}
         taggedTasks={taggedTasks}
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}

@@ -8,6 +8,29 @@ import type {
 } from "../types/ui.types";
 import { YMDToDateMs, dateToYMD } from "./convertDate";
 
+function findMonday(day: Date): Date {
+  const initalDay = day.getDay();
+  if (initalDay == 1) {
+    return day;
+  }
+  day.setDate(day.getDate() - initalDay + 1);
+  return day;
+}
+
+export function buildWeek(day: Date): Week {
+  const week: Partial<Week> = [];
+
+  if (day.getDay() != 1) {
+    findMonday(day);
+  }
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(day);
+    date.setDate(day.getDate() + i);
+    week.push(date);
+  }
+  return week as Week;
+}
+
 export default function buildWeekGanttTracks(
   taggedTasks: TaggedTasks,
   days: Week,
