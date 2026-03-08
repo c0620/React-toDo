@@ -1,6 +1,6 @@
 import { colors } from "../../data";
 import React, { useRef, useState, type FormEvent } from "react";
-import { useTasksTags } from "../TaskManager";
+import { useTasksTagsStore } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 import clsx from "clsx";
 import styles from "./Forms.module.scss";
@@ -8,8 +8,8 @@ import type { Tag } from "../../types/data.types";
 import type { TagColorStyles, FormDataType } from "../../types/forms.types";
 
 export function AddEditTag() {
-  const context = useTasksTags();
-  const tags = context.tasksTags.tags;
+  const context = useTasksTagsStore();
+  const tags = context.tags;
 
   const [tagInput, setTagInput] = useState({
     name: tags[0]?.name ?? null,
@@ -49,21 +49,15 @@ export function AddEditTag() {
     }
 
     if (tagInput.id !== null) {
-      context.dispatch({
-        type: "tagEdit",
-        tag: {
-          id: tagInput.id,
-          color: tagColor,
-          name: tagInput.name,
-        },
+      context.tagEdit({
+        id: tagInput.id,
+        color: tagColor,
+        name: tagInput.name,
       });
     } else {
-      context.dispatch({
-        type: "tagAdd",
-        tag: {
-          color: tagColor,
-          name: tagInput.name,
-        },
+      context.tagAdd({
+        color: tagColor,
+        name: tagInput.name,
       });
     }
   }

@@ -51,19 +51,16 @@ let userTags: Array<Tag> = [
   {
     id: 0,
     name: "длинная цель",
-    tasks: 0,
     color: colors[0]!,
   },
   {
     id: 1,
     name: "работа",
-    tasks: 1,
     color: colors[1]!,
   },
   {
     id: 2,
     name: "учёба",
-    tasks: 4,
     color: colors[2]!,
   },
 ];

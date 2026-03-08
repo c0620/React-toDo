@@ -1,6 +1,6 @@
 import * as mock from "../../data";
 import { useState } from "react";
-import { useTaggedTasks, useTasksTags } from "../TaskManager";
+import { useTaggedTasks, useTasksTagsStore } from "../TaskManager";
 import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
 import Timeline from "./Timeline";
@@ -40,8 +40,7 @@ export default function Gantt({
 }
 
 function Filter() {
-  const context = useTasksTags();
-  const tasksTags = context.tasksTags;
+  const tasksTags = useTasksTagsStore();
   return (
     <>
       <h3>{tasksTags.tasks.length} задач</h3>

@@ -13,7 +13,6 @@ export type Color = {
 export type Tag = {
   id: number;
   name: string;
-  tasks: number;
   color: Color;
 };
 

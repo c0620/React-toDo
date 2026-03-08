@@ -1,7 +1,7 @@
 import { Progress } from "../../components/Progress/Progress";
 import { AddEditTag } from "../../components/Forms/TagForm";
 import { AddEditTask } from "../../components/Forms/TaskForm";
-import { useTasksTags } from "../../components/TaskManager";
+import { useTasksTagsStore } from "../../components/TaskManager";
 import { useActionData, useLoaderData } from "react-router";
 import styles from "./UpdatePage.module.scss";
 
@@ -31,11 +31,11 @@ export async function updateLoader({
 
 export default function UpdatePage() {
   const userParams = useLoaderData();
-  const context = useTasksTags();
+  const context = useTasksTagsStore();
   let task = null;
 
   if (userParams?.type === "task") {
-    task = context.tasksTags.tasks.find((task) => task.id === +userParams.id);
+    task = context.tasks.find((task) => task.id === +userParams.id);
   }
 
   return (

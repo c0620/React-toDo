@@ -1,4 +1,4 @@
-import { useTasksTags } from "../TaskManager";
+import { useTasksTagsStore } from "../TaskManager";
 import { dateToYMD } from "../../utils/convertDate";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SearchDropdown } from "./SearchDropdown";
@@ -9,15 +9,15 @@ import { Link, useNavigate } from "react-router";
 import clsx from "clsx";
 
 export function AddEditTask({ task }: { task: Task | null }) {
-  const context = useTasksTags();
-  let tag = context.tasksTags.tags[0];
+  const context = useTasksTagsStore();
+  let tag = context.tags[0];
 
   if (!tag) {
     return <div>Добавьте первую цель</div>;
   }
 
   if (task) {
-    tag = context.tasksTags.tags.find((tag) => tag.id == task.tagId);
+    tag = context.tags.find((tag) => tag.id == task.tagId);
     if (!tag) {
       throw Error("TaskForm: task without tag");
     }
@@ -32,7 +32,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
   const [match, setMatch] = useState(true);
   const navigate = useNavigate();
 
-  let tags = context.tasksTags.tags;
+  let tags = context.tags;
 
   function onTaskSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,33 +46,19 @@ export function AddEditTask({ task }: { task: Task | null }) {
     let taskDate = formObject.date;
 
     if (task == null) {
-      context.dispatch({
-        type: "taskAdd",
-        task: {
-          date: taskDate,
-          tagId: +formObject.tag,
-          title: formObject.title,
-          done: false,
-        },
-      });
-
-      context.dispatch({
-        type: "tagIncrement",
-        tag: {
-          id: +formObject.tag,
-        },
-        count: 1,
+      context.taskAdd({
+        date: taskDate,
+        tagId: +formObject.tag,
+        title: formObject.title,
+        done: false,
       });
     } else {
-      context.dispatch({
-        type: "taskEdit",
-        task: {
-          id: task.id,
-          date: taskDate,
-          tagId: +formObject.tag,
-          title: formObject.title,
-          done: task.done,
-        },
+      context.taskEdit({
+        id: task.id,
+        date: taskDate,
+        tagId: +formObject.tag,
+        title: formObject.title,
+        done: task.done,
       });
       navigate("/");
     }
