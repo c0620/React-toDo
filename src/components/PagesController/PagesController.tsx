@@ -4,6 +4,7 @@ import { useState } from "react";
 
 const pages = [
   { to: "/", label: "Дашборд" },
+  { to: "/e", label: "404" },
   { to: "/update", label: "Добавить задачу/цель" },
 ];
 
@@ -20,7 +21,14 @@ export default function PagesController() {
 
   return (
     <nav className={styles.navigation}>
-      <NavLink to={current.to} className={styles.navigationLink!} end>
+      <NavLink
+        to={current.to}
+        className={[
+          styles.navigationLink!,
+          isOpen ? "" : styles.roundLink,
+        ].join(" ")}
+        end
+      >
         {current.label}
         <button className={styles.navigationButton} onClick={toggleController}>
           <img
@@ -33,20 +41,22 @@ export default function PagesController() {
         </button>
       </NavLink>
 
-      {isOpen && (
-        <div className={styles.navigationLinks}>
-          {others.map((page) => (
-            <NavLink
-              key={page.to}
-              to={page.to}
-              className={styles.navigationLink!}
-              onClick={() => setIsOpen(false)}
-            >
-              {page.label}
-            </NavLink>
-          ))}
-        </div>
-      )}
+      <div
+        className={[styles.navigationLinks, isOpen ? "" : styles.closed].join(
+          " "
+        )}
+      >
+        {others.map((page) => (
+          <NavLink
+            key={page.to}
+            to={page.to}
+            className={styles.navigationLink!}
+            onClick={() => setIsOpen(false)}
+          >
+            {page.label}
+          </NavLink>
+        ))}
+      </div>
     </nav>
   );
 }
