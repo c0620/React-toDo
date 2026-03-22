@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const pages = [
   { to: "/", label: "Дашборд" },
-  { to: "/e", label: "404" },
+  // { to: "/e", label: "404" },
   { to: "/update", label: "Добавить задачу/цель" },
 ];
 

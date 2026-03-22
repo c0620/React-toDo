@@ -24,14 +24,17 @@ export function Progress() {
     let color = current.color;
 
     taskLines.push(
-      <TaskLine {...{ name, allTasks, completed, color, maxLength }} />
+      <TaskLine
+        key={tagId}
+        {...{ name, allTasks, completed, color, maxLength }}
+      />
     );
 
     if (
       ((index + 1) % linesCount == 0 && index != 0) ||
       index == taggedCount - 1
     ) {
-      taskRows.push(<TaskColumn>{taskLines}</TaskColumn>);
+      taskRows.push(<TaskColumn key={index}>{taskLines}</TaskColumn>);
       taskLines = [];
     }
   });

@@ -18,13 +18,14 @@ export default function Tracks({
   const componentTracks: any = [];
 
   for (const track of tracks) {
-    track.cells.forEach((cell) =>
+    track.cells.forEach((cell, i) =>
       componentTracks.push(
         <Cell
           track={track}
           cell={cell}
           onTrackClick={onTrackClick}
           selectedTag={selectedTag}
+          key={i + track.tagId}
         />
       )
     );
@@ -93,8 +94,8 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
               zIndex: "10",
             }}
           >
-            {cell.tasks.map((t) => (
-              <p>{t.title}</p>
+            {cell.tasks.map((t, i) => (
+              <p key={i}>{t.title}</p>
             ))}
           </div>,
           cellRef.current
