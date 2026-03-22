@@ -3,14 +3,14 @@ import type { Week, SwitchWeekType } from "../../types/ui.types";
 import { useState } from "react";
 import styles from "./Gantt.module.scss";
 import Tracks from "./Tracks";
-import { buildWeek } from "../../utils/ganttModel";
+import { buildWeek, findMonday } from "../../utils/ganttModel";
 
 export default function Timeline({
   taggedTasks,
   onTrackClick,
   selectedTag,
 }: TimelineType) {
-  const monday = new Date();
+  const monday = findMonday(new Date());
   const [dayIndexStart, setDayIndexStart] = useState(0);
   monday.setDate(monday.getDate() + dayIndexStart);
   const switchDays = buildWeek(monday);
@@ -66,7 +66,7 @@ function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
       </div>
       <div className={styles.switchWeekDays}>
         {days.map((day) => (
-          <Day day={day} />
+          <Day day={day} key={day.getUTCDay()} />
         ))}
       </div>
     </div>

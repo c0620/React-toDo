@@ -34,7 +34,7 @@ export default function Gantt({
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
-      <Filter />
+      {/* <Filter /> */}
     </div>
   );
 }

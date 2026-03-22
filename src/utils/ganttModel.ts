@@ -8,9 +8,13 @@ import type {
 } from "../types/ui.types";
 import { YMDToDateMs, dateToYMD } from "./convertDate";
 
-function findMonday(day: Date): Date {
+export function findMonday(day: Date): Date {
   const initalDay = day.getDay();
   if (initalDay == 1) {
+    return day;
+  }
+  if (initalDay == 0) {
+    day.setDate(day.getDate() - 6);
     return day;
   }
   day.setDate(day.getDate() - initalDay + 1);
