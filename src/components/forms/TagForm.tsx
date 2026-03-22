@@ -1,21 +1,37 @@
 import { colors } from "../../data";
-import React, { useRef, useState, type FormEvent } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import { useTasksTagsStore } from "../TaskManager";
 import { SearchDropdown } from "./SearchDropdown";
 import clsx from "clsx";
 import styles from "./Forms.module.scss";
 import type { Tag } from "../../types/data.types";
-import type { TagColorStyles, FormDataType } from "../../types/forms.types";
+import type {
+  TagColorStyles,
+  FormDataType,
+  TagInput,
+} from "../../types/forms.types";
 
 export function AddEditTag() {
   const context = useTasksTagsStore();
-  const tags = context.tags;
 
-  const [tagInput, setTagInput] = useState({
-    name: tags[0]?.name ?? null,
-    id: tags[0]?.id ?? null,
+  const [tagInput, setTagInput] = useState<TagInput>({
+    name: null,
+    id: null,
+    color: null,
   });
-  const [match, setMatch] = useState(true);
+  const [matchTags, setMatchTags] = useState<Tag[] | null>(context.tags);
+
+  const message = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMatchTags(context.tags);
+  }, [context.tags]);
 
   let colorPickers = colors.map((color) => (
     <input
@@ -29,6 +45,8 @@ export function AddEditTag() {
       }
       value={color.id}
       name="color"
+      onChange={() => setTagInput({ ...tagInput, color: color.id })}
+      checked={color.id === tagInput.color}
     />
   ));
 
@@ -38,6 +56,7 @@ export function AddEditTag() {
     const formObject = Object.fromEntries(form.entries()) as FormDataType;
 
     if (!formObject.color || !tagInput.name) {
+      showMessage("Ошибка: заполнены не все поля");
       throw Error("Missing Tag form fields");
     }
 
@@ -54,72 +73,110 @@ export function AddEditTag() {
         color: tagColor,
         name: tagInput.name,
       });
+      showMessage("Цель отредактирована!");
     } else {
       context.tagAdd({
         color: tagColor,
         name: tagInput.name,
       });
+      showMessage("Цель добавлена!");
     }
+
+    setTagInput({ name: null, id: null, color: null });
   }
 
-  function onIdChange(fieldName: string, id: number) {
-    const inputTag = tags.find((t) => t.id == id);
-    if (inputTag) {
-      setTagInput({ name: inputTag.name, id: inputTag.id });
+  function showMessage(text: string) {
+    if (message.current) {
+      message.current.className = styles.successOpen as string;
+      message.current.textContent = text;
     }
+
+    setTimeout(() => {
+      if (message.current) {
+        message.current.className = styles.successClosed as string;
+      }
+    }, 2000);
   }
 
   function onNameChange(name: string) {
-    const matches = tags.filter(
+    const matches = context.tags.filter(
       (tag) => tag.name.toLowerCase().indexOf(name.toLowerCase()) == 0
     );
+    setTagInput({ ...tagInput, name: name });
 
     if (matches.length == 0) {
-      setMatch(false);
-      setTagInput({ name: name, id: null });
-    } else {
-      setMatch(true);
-      const inputTag = matches.find((t) => t.name == name);
-      if (inputTag) {
-        setTagInput({ name: inputTag.name, id: inputTag.id });
-      } else {
-        setTagInput({ name: name, id: null });
+      if (tagInput.id == null) {
+        setMatchTags(null);
       }
+    } else {
+      setMatchTags(matches);
+    }
+    console.log(tagInput);
+  }
+
+  function onTagClick(e: MouseEvent, tag: Tag) {
+    e.preventDefault();
+    if (tagInput.id == tag.id) {
+      setTagInput({ name: tag.name, id: null, color: tagInput.color });
+    } else {
+      setTagInput({ name: tag.name, id: tag.id, color: tag.color.id });
     }
   }
 
   return (
-    <form className={styles.tag} onSubmit={onTagSubmit}>
-      <fieldset className={styles.formSet}>
+    <>
+      <form className={styles.tag} onSubmit={onTagSubmit}>
+        <fieldset className={styles.formSet}>
+          <label className={styles.formLabel}>
+            Название цели
+            <input
+              className={styles.formTInput}
+              type="text"
+              name="name"
+              onChange={(e) => onNameChange(e.target.value)}
+              value={tagInput.name ?? ""}
+            />
+            {matchTags && (
+              <div
+                className={styles.tagHints}
+                onWheel={(e) => {
+                  if (Math.abs(e.deltaX) === 0) {
+                    e.currentTarget.scrollLeft += e.deltaY;
+                  }
+                }}
+              >
+                {matchTags?.map((m) => (
+                  <button
+                    className={styles.tagButton}
+                    onClick={(e) => onTagClick(e, m)}
+                  >
+                    {m.name}
+                    {tagInput?.id == m.id ? (
+                      <img
+                        src="./src/assets/icons/close.svg"
+                        alt="удалить"
+                        className={styles.tagIcon}
+                      ></img>
+                    ) : (
+                      ""
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </label>
+        </fieldset>
         <label className={styles.formLabel}>
-          Название цели
-          <input
-            className={clsx(match ? styles.formDInput : styles.formTInput)}
-            type="text"
-            name="name"
-            onChange={(e) => onNameChange(e.target.value)}
-            value={tagInput.name ?? ""}
-          />
-          <SearchDropdown
-            searchInput={tagInput.name}
-            inputName={"tag"}
-            value={tagInput.id ?? 0}
-            onChange={onIdChange}
-            items={tags}
-            filterFunc={(arg: Tag) => arg.name}
-            isRequired={false}
-            optText="Добавление нового тега"
-          />
+          Цвет
+          <fieldset className={styles.formColors}>{colorPickers}</fieldset>
         </label>
-      </fieldset>
-      <label className={styles.formLabel}>
-        Цвет
-        <fieldset className={styles.formColors}>{colorPickers}</fieldset>
-      </label>
 
-      <button className={styles.formButton} type="submit">
-        добавить цель
-      </button>
-    </form>
+        <button className={styles.formButton} type="submit">
+          {tagInput.id != null ? "редактировать цель" : "добавить цель"}
+        </button>
+      </form>
+
+      <div className={styles.successClosed} ref={message}></div>
+    </>
   );
 }

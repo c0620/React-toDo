@@ -14,3 +14,9 @@ export interface TagColorStyles extends React.CSSProperties {
 export type filterFunc = {
   (arg: Tag): string;
 };
+
+export type TagInput = {
+  name: null | string;
+  id: null | number;
+  color: null | number;
+};
