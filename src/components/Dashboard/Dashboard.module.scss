@@ -8,8 +8,38 @@
   display: flex;
   align-content: flex-start;
   flex-wrap: wrap;
+  gap: var(--d-mgM);
+  height: calc(var(--d-sect-height) - 80px);
+  overflow-y: scroll;
+}
+
+.right {
   width: 50%;
   height: var(--d-sect-height);
+}
+
+.filter {
+  display: flex;
   gap: var(--d-mgM);
-  overflow-y: scroll;
+  padding-bottom: var(--d-mgM);
+}
+
+.filter-button {
+  height: 60px;
+  border-radius: var(--d-rad);
+  background-color: var(--l-card-bg-l);
+  color: var(--l-card-bg-d);
+  width: calc(50% / 2);
+  font-size: 28px;
+  font-family:
+    Mustica Pro,
+    sans-serif;
+}
+
+.filter-button-selected {
+  color: var(--l-black);
+}
+
+.filter-button:first-child {
+  width: calc(50% - var(--d-mgM));
 }

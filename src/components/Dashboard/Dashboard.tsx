@@ -18,6 +18,10 @@ function Dashboard() {
 
   const [selectedTag, setSelectedTag] = useState<GanttSelectedTag>(null);
 
+  const [filterType, setFilterType] = useState<"all" | "active" | "done">(
+    "all"
+  );
+
   useEffect(() => {
     let newLocalTasks = sortTasksByDate(context.tasks);
 
@@ -62,22 +66,75 @@ function Dashboard() {
       newLocalTasks = context.tasks;
     } else {
       setSelectedTag(tagId);
-      newLocalTasks = filterSelectedTasks(tagId, context.tasks);
+      // newLocalTasks = filterSelectedTasks(tagId, context.tasks);
     }
+  }
+
+  function filterActiveTasks(tasks: Array<Task>) {
+    let newLocalTasks = tasks.filter((task) => !task.done);
+    setLocalTasksTags({ ...localTasksTags, tasks: newLocalTasks });
+    setFilterType("active");
+  }
+
+  function filterDoneTasks(tasks: Array<Task>) {
+    let newLocalTasks = tasks.filter((task) => task.done);
+    setLocalTasksTags({ ...localTasksTags, tasks: newLocalTasks });
+    setFilterType("done");
+  }
+
+  function filterAllTasks() {
+    setLocalTasksTags({
+      tasks: sortTasksByDate(context.tasks),
+      tags: context.tags,
+    });
+    setFilterType("all");
   }
 
   return (
     <section className={styles.dashboard}>
       <Gantt onTrackClick={onTrackClick} selectedTag={selectedTag} />
-      <div className={styles.cards}>
-        {localTasksTags.tasks.map((task) => (
-          <Card
-            task={task}
-            tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)!}
-            handleClickDone={handleClickDone}
-            handleDeleteCard={handleDeleteCard}
-          />
-        ))}
+      <div className={styles.right}>
+        <div className={styles.filter}>
+          <button
+            className={[
+              styles.filterButton,
+              filterType == "all" ? styles.filterButtonSelected : "",
+            ].join(" ")}
+            onClick={() => filterAllTasks()}
+          >
+            Все задачи
+          </button>
+          <button
+            className={[
+              styles.filterButton,
+              filterType == "active" ? styles.filterButtonSelected : "",
+            ].join(" ")}
+            onClick={() => filterActiveTasks(sortTasksByDate(context.tasks))}
+          >
+            Активные
+          </button>
+          <button
+            className={[
+              styles.filterButton,
+              filterType == "done" ? styles.filterButtonSelected : "",
+            ].join(" ")}
+            onClick={() => filterDoneTasks(sortTasksByDate(context.tasks))}
+          >
+            Выполненные
+          </button>
+        </div>
+
+        <div className={styles.cards}>
+          {localTasksTags.tasks.map((task) => (
+            <Card
+              key={task.id}
+              task={task}
+              tag={localTasksTags.tags.find((tag) => tag.id == task.tagId)!}
+              handleClickDone={handleClickDone}
+              handleDeleteCard={handleDeleteCard}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
