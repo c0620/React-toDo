@@ -36,7 +36,7 @@ export default function PagesController() {
               styles.navigationIcon,
               isOpen ? styles.iconOpen : "",
             ].join(" ")}
-            src="./src/assets/icons/arrow.svg"
+            src="/icons/arrow.svg"
           />
         </button>
       </NavLink>

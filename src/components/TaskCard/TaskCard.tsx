@@ -43,7 +43,7 @@ export default function Card({
           <Link className={styles.cardButton} to={`update/task/${task.id}`}>
             <img
               className={styles.cardIcon}
-              src="./src/assets/icons/edit.svg"
+              src="/icons/edit.svg"
               alt="редактировать"
             />
           </Link>
@@ -53,7 +53,7 @@ export default function Card({
           >
             <img
               className={styles.cardIcon}
-              src="./src/assets/icons/close.svg"
+              src="/icons/close.svg"
               alt="удалить"
             />
           </button>

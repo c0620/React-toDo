@@ -162,7 +162,7 @@ export function AddEditTag() {
                     {m.name}
                     {tagInput?.id == m.id ? (
                       <img
-                        src="./src/assets/icons/close.svg"
+                        src="/icons/close.svg"
                         alt="удалить"
                         className={styles.tagIcon}
                       ></img>
