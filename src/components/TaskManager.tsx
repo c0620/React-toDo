@@ -12,7 +12,7 @@ import type {
 } from "../types/data.types";
 import type { Dispatch } from "react";
 import type { TaskAction } from "../types/data.types";
-import { makeTagged } from "../utils/tasksFormatting.js";
+import { makeTagged, sortTasksByDate } from "../utils/tasksFormatting.js";
 
 type TasksTagsStore = {
   tasks: Task[];
@@ -43,7 +43,7 @@ export const useTasksTagsStore = create<TasksTagsStore>()(
           };
 
           return {
-            tasks: [...state.tasks, newTask],
+            tasks: sortTasksByDate([...state.tasks, newTask]),
           };
         }),
 
@@ -60,10 +60,18 @@ export const useTasksTagsStore = create<TasksTagsStore>()(
         })),
 
       taskDelete: (task) =>
-        set((state) => ({
-          tasks: state.tasks.filter((t) => t.id !== task.id),
-        })),
+        set((state) => {
+          const newTasks = state.tasks.filter((t) => t.id !== task.id);
+          const isTagUsed = newTasks.some((t) => t.tagId === task.tagId);
+          const newTags = isTagUsed
+            ? state.tags
+            : state.tags.filter((tag) => tag.id !== task.tagId);
 
+          return {
+            tasks: newTasks,
+            tags: newTags,
+          };
+        }),
       tagAdd: (tag) =>
         set((state) => {
           const last = state.tags.at(-1);
