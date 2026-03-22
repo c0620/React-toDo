@@ -30,11 +30,19 @@ export function AddEditTag() {
   const message = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMatchTags(context.tags);
+    if (context.tags.length != 0) {
+      setMatchTags(context.tags);
+    } else {
+      setTimeout(
+        () => showMessage("Чтобы создать задачу, добавьте первую цель"),
+        1000
+      );
+    }
   }, [context.tags]);
 
   let colorPickers = colors.map((color) => (
     <input
+      key={color.id}
       className={styles.tagColor}
       type="radio"
       style={
@@ -149,6 +157,7 @@ export function AddEditTag() {
                   <button
                     className={styles.tagButton}
                     onClick={(e) => onTagClick(e, m)}
+                    key={m.id}
                   >
                     {m.name}
                     {tagInput?.id == m.id ? (

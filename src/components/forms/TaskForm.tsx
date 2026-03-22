@@ -10,11 +10,9 @@ import clsx from "clsx";
 
 export function AddEditTask({ task }: { task: Task | null }) {
   const context = useTasksTagsStore();
-  let tag = context.tags[0];
 
-  if (!tag) {
-    return <div>Добавьте первую цель</div>;
-  }
+  let tag = context.tags[0];
+  const isEmpty = tag == undefined;
 
   if (task) {
     tag = context.tags.find((tag) => tag.id == task.tagId);
@@ -25,7 +23,7 @@ export function AddEditTask({ task }: { task: Task | null }) {
   const [userInput, setUserInput] = useState({
     title: task ? task.title : "",
     date: task ? task.date : dateToYMD(new Date()),
-    tag: tag?.name,
+    tag: tag ? tag.name : null,
     tagId: tag?.id ?? 0,
   });
   const [completed, setCompleted] = useState(true);
@@ -82,14 +80,16 @@ export function AddEditTask({ task }: { task: Task | null }) {
     );
 
     matches.length != 0 ? setMatch(true) : setMatch(false);
-    console.log(match);
 
     setUserInput({ ...userInput, tag: name });
   }
 
   return (
-    <form className={styles.task} onSubmit={onTaskSubmit}>
-      <fieldset className={styles.formSet}>
+    <form
+      className={isEmpty ? styles.emptyTask : styles.task}
+      onSubmit={onTaskSubmit}
+    >
+      <fieldset className={styles.formSet} disabled={isEmpty}>
         <label className={styles.formLabel}>
           Название задачи
           <input
@@ -116,14 +116,14 @@ export function AddEditTask({ task }: { task: Task | null }) {
           />
         </label>
       </fieldset>
-      <fieldset className={styles.formSet}>
+      <fieldset className={styles.formSet} disabled={isEmpty}>
         <label className={styles.formLabel}>
           Цель
           <input
             name="tag"
             className={clsx(match ? styles.formDInput : styles.formDError)}
             onChange={(e) => handleTagInput(e.target.value)}
-            value={userInput.tag}
+            value={userInput.tag ? userInput.tag : undefined}
           ></input>
           <SearchDropdown
             inputName={"tag"}

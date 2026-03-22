@@ -76,6 +76,11 @@
   min-width: 800px;
 }
 
+.empty-task {
+  @extend .task;
+  opacity: 0.5;
+}
+
 .tag {
   @extend .form;
   width: 100%;
@@ -155,7 +160,7 @@
   top: var(--d-mgM);
   right: var(--d-mgM);
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.5s ease;
   font-size: 32px;
   background-color: var(--l-black);
   border-radius: var(--d-rad);
