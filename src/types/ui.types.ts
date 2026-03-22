@@ -31,13 +31,11 @@ export interface TaskCard {
 }
 
 export interface TimelineType {
-  taggedTasks: TaggedTasks;
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
 }
 
 export interface TracksType {
-  taggedTasks: TaggedTasks;
   days: Week;
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;

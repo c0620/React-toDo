@@ -5,11 +5,7 @@ import styles from "./Gantt.module.scss";
 import Tracks from "./Tracks";
 import { buildWeek, findMonday } from "../../utils/ganttModel";
 
-export default function Timeline({
-  taggedTasks,
-  onTrackClick,
-  selectedTag,
-}: TimelineType) {
+export default function Timeline({ onTrackClick, selectedTag }: TimelineType) {
   const monday = findMonday(new Date());
   const [dayIndexStart, setDayIndexStart] = useState(0);
   monday.setDate(monday.getDate() + dayIndexStart);
@@ -24,7 +20,6 @@ export default function Timeline({
       />
 
       <Tracks
-        taggedTasks={taggedTasks}
         days={switchDays}
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}

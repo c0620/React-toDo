@@ -65,75 +65,55 @@ let userTags: Array<Tag> = [
   },
 ];
 
+const date1 = new Date();
+const date2 = new Date();
+date2.setDate(date2.getDate() + 2);
+const date3 = new Date();
+date3.setDate(date3.getDate() + 7);
+const date4 = new Date();
+date4.setDate(date3.getDate() + 1);
+
 let userTasks: Array<Task> = [
   {
     id: 0,
-    date: dateToYMD(month.jan[3]!),
+    date: dateToYMD(date1),
     tagId: userTags[1]!.id,
     title: "Запланировать задачу",
     done: false,
   },
   {
     id: 1,
-    date: dateToYMD(month.jan[1]!),
+    date: dateToYMD(date2),
     tagId: userTags[2]!.id,
     title: "Прочитать учебник по сетям целиком и полностью",
     done: true,
   },
   {
     id: 2,
-    date: dateToYMD(month.jan[7]!),
+    date: dateToYMD(date3),
     tagId: userTags[2]!.id,
     title: "Сделать пет-проект",
     done: false,
   },
   {
     id: 3,
-    date: dateToYMD(month.jan[7]!),
+    date: dateToYMD(date3),
     tagId: userTags[2]!.id,
     title: "Вторая задача на день пета",
     done: false,
   },
   {
     id: 4,
-    date: dateToYMD(month.jan[23]!),
+    date: dateToYMD(date4),
     tagId: userTags[2]!.id,
     title: "Задача на день после пета",
     done: false,
   },
   {
-    id: 4,
-    date: dateToYMD(month.jan[23]!),
-    tagId: userTags[2]!.id,
-    title: "Задача на день после пета",
-    done: false,
-  },
-  {
-    id: 4,
-    date: dateToYMD(month.jan[23]!),
-    tagId: userTags[2]!.id,
-    title: "Задача на день после пета",
-    done: false,
-  },
-  {
-    id: 4,
-    date: dateToYMD(month.jan[23]!),
-    tagId: userTags[2]!.id,
-    title: "Задача на день после пета",
-    done: false,
-  },
-  {
-    id: 4,
-    date: dateToYMD(month.jan[23]!),
-    tagId: userTags[2]!.id,
-    title: "Задача на день после пета",
-    done: false,
-  },
-  {
-    id: 4,
-    date: dateToYMD(month.jan[23]!),
-    tagId: userTags[2]!.id,
-    title: "Задача на день после пета",
+    id: 5,
+    date: dateToYMD(date1),
+    tagId: userTags[0]!.id,
+    title: "Длинная задача",
     done: false,
   },
 ];

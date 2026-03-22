@@ -20,20 +20,9 @@ export default function Gantt({
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
 }) {
-  const taggedTasks = useTaggedTasks();
-  for (const tagId in taggedTasks) {
-    if (taggedTasks[tagId]) {
-      taggedTasks[tagId].tasks = sortTasksByDate(taggedTasks[tagId]?.tasks);
-    }
-  }
-
   return (
     <div className={styles.gantt}>
-      <Timeline
-        taggedTasks={taggedTasks}
-        onTrackClick={onTrackClick}
-        selectedTag={selectedTag}
-      />
+      <Timeline onTrackClick={onTrackClick} selectedTag={selectedTag} />
       {/* <Filter /> */}
     </div>
   );

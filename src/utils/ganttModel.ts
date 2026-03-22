@@ -45,6 +45,7 @@ export default function buildWeekGanttTracks(
   if (days.length != 7) {
     throw Error("Gantt: wrong week range");
   }
+
   for (const [id, tagged] of Object.entries(taggedTasks)) {
     const isSelected = selectedTag == null || +id == selectedTag;
 
@@ -84,6 +85,7 @@ function buildGanttTrack(
     opacity: isSelected ? "100%" : "30%",
     color,
   };
+
   const weekTasks = segment.tasks;
   if (weekTasks.length == 0) {
     throw Error("Gantt: tagged in the scope of a week without tasks");
@@ -200,10 +202,11 @@ function buildSegmentTasks(
 ) {
   const startWeek = days[0];
   const endWeek = days[6];
+
   const weekTasks = tasks.filter(
     (task) =>
-      +YMDToDateMs(task.date) >= +startWeek &&
-      +YMDToDateMs(task.date) <= +endWeek
+      +YMDToDateMs(task.date) >= +YMDToDateMs(dateToYMD(startWeek)) &&
+      +YMDToDateMs(task.date) <= +YMDToDateMs(dateToYMD(endWeek))
   );
 
   if (weekTasks.length != 0) {
