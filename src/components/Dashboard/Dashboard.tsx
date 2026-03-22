@@ -102,7 +102,7 @@ function Dashboard() {
             ].join(" ")}
             onClick={() => filterAllTasks()}
           >
-            Все задачи
+            Все задачи ({context.tasks.length})
           </button>
           <button
             className={[
@@ -111,7 +111,7 @@ function Dashboard() {
             ].join(" ")}
             onClick={() => filterActiveTasks(sortTasksByDate(context.tasks))}
           >
-            Активные
+            Активные ({context.tasks.filter((t) => !t.done).length})
           </button>
           <button
             className={[
@@ -120,7 +120,7 @@ function Dashboard() {
             ].join(" ")}
             onClick={() => filterDoneTasks(sortTasksByDate(context.tasks))}
           >
-            Выполненные
+            Сделанные ({context.tasks.filter((t) => t.done).length})
           </button>
         </div>
 
