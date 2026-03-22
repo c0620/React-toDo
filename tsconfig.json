@@ -44,5 +44,5 @@
     "module": "ESNext",
     "moduleResolution": "bundler"
   },
-  "include": ["src", "scss.d.ts"]
+  "include": ["src", "env.d.ts"]
 }

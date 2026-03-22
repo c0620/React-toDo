@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router";
 import styles from "./PagesController.module.scss";
 import { useState } from "react";
+import arrowIcon from "../../assets/icons/arrow.svg";
 
 const pages = [
   { to: "/", label: "Дашборд" },
@@ -36,7 +37,7 @@ export default function PagesController() {
               styles.navigationIcon,
               isOpen ? styles.iconOpen : "",
             ].join(" ")}
-            src="/icons/arrow.svg"
+            src={arrowIcon}
           />
         </button>
       </NavLink>

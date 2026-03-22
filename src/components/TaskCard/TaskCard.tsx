@@ -3,6 +3,8 @@ import clsx from "clsx";
 import type { TaskCard, InlineStyles } from "../../types/ui.types";
 import { YMDToDateMs } from "../../utils/convertDate";
 import { Link } from "react-router";
+import closeIcon from "../../assets/icons/close.svg";
+import editIcon from "../../assets/icons/edit.svg";
 
 export default function Card({
   task,
@@ -43,7 +45,7 @@ export default function Card({
           <Link className={styles.cardButton} to={`update/task/${task.id}`}>
             <img
               className={styles.cardIcon}
-              src="/icons/edit.svg"
+              src={editIcon}
               alt="редактировать"
             />
           </Link>
@@ -51,11 +53,7 @@ export default function Card({
             className={styles.cardButton}
             onClick={() => handleDeleteCard(task)}
           >
-            <img
-              className={styles.cardIcon}
-              src="/icons/close.svg"
-              alt="удалить"
-            />
+            <img className={styles.cardIcon} src={closeIcon} alt="удалить" />
           </button>
         </div>
       </div>

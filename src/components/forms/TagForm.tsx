@@ -16,6 +16,7 @@ import type {
   FormDataType,
   TagInput,
 } from "../../types/forms.types";
+import closeIcon from "../../assets/icons/close.svg";
 
 export function AddEditTag() {
   const context = useTasksTagsStore();
@@ -162,7 +163,7 @@ export function AddEditTag() {
                     {m.name}
                     {tagInput?.id == m.id ? (
                       <img
-                        src="/icons/close.svg"
+                        src={closeIcon}
                         alt="удалить"
                         className={styles.tagIcon}
                       ></img>

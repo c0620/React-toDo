@@ -1,10 +1,10 @@
-import { createBrowserRouter, useAsyncError } from "react-router";
+import { createHashRouter, useAsyncError } from "react-router";
 import DashboardPage from "./pages/DashboardPage";
 import UpdatePage, { updateLoader } from "./pages/UpdatePage/UpdatePage";
 import App from "./App";
 import ErrorPage from "./pages/ErrorPage";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     Component: App,
