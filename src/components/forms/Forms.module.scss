@@ -79,6 +79,7 @@
 .empty-task {
   @extend .task;
   opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tag {

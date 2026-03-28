@@ -21,7 +21,7 @@ export default function PagesController() {
   const others = pages.filter((p) => p.to !== current!.to);
 
   return (
-    <nav className={styles.navigation}>
+    <nav className={styles.navigation} onClick={toggleController}>
       <NavLink
         to={current.to}
         className={[
@@ -31,7 +31,7 @@ export default function PagesController() {
         end
       >
         {current.label}
-        <button className={styles.navigationButton} onClick={toggleController}>
+        <button className={styles.navigationButton}>
           <img
             className={[
               styles.navigationIcon,

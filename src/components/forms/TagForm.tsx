@@ -17,6 +17,7 @@ import type {
   TagInput,
 } from "../../types/forms.types";
 import closeIcon from "../../assets/icons/close.svg";
+import { showMessage } from "./FormMessage";
 
 export function AddEditTag() {
   const context = useTasksTagsStore();
@@ -29,17 +30,6 @@ export function AddEditTag() {
   const [matchTags, setMatchTags] = useState<Tag[] | null>(context.tags);
 
   const message = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (context.tags.length != 0) {
-      setMatchTags(context.tags);
-    } else {
-      setTimeout(
-        () => showMessage("Чтобы создать задачу, добавьте первую цель"),
-        1000
-      );
-    }
-  }, [context.tags]);
 
   let colorPickers = colors.map((color) => (
     <input
@@ -65,7 +55,7 @@ export function AddEditTag() {
     const formObject = Object.fromEntries(form.entries()) as FormDataType;
 
     if (!formObject.color || !tagInput.name) {
-      showMessage("Ошибка: заполнены не все поля");
+      showMessage("Ошибка: заполнены не все поля", message);
       throw Error("Missing Tag form fields");
     }
 
@@ -82,29 +72,16 @@ export function AddEditTag() {
         color: tagColor,
         name: tagInput.name,
       });
-      showMessage("Цель отредактирована!");
+      showMessage("Цель отредактирована!", message);
     } else {
       context.tagAdd({
         color: tagColor,
         name: tagInput.name,
       });
-      showMessage("Цель добавлена!");
+      showMessage("Цель добавлена!", message);
     }
 
     setTagInput({ name: null, id: null, color: null });
-  }
-
-  function showMessage(text: string) {
-    if (message.current) {
-      message.current.className = styles.successOpen as string;
-      message.current.textContent = text;
-    }
-
-    setTimeout(() => {
-      if (message.current) {
-        message.current.className = styles.successClosed as string;
-      }
-    }, 2000);
   }
 
   function onNameChange(name: string) {
