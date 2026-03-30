@@ -36,9 +36,13 @@ export const useTasksTagsStore = create<TasksTagsStore>()(
 
       taskAdd: (task) =>
         set((state) => {
-          const lastTask = state.tasks.at(-1);
+          const tasksIDs = state.tasks.map((t) => t.id);
+          let id = 0;
+          if (tasksIDs) {
+            id = Math.max(...tasksIDs) + 1;
+          }
           const newTask: Task = {
-            id: lastTask ? lastTask.id + 1 : 0,
+            id,
             ...task,
           };
 
