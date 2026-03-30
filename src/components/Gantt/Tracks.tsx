@@ -70,7 +70,7 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
         onMouseEnter={() => setTooltip(true)}
         onMouseLeave={() => setTooltip(false)}
         style={{
-          gridRow: track.tagId + 1,
+          gridRow: cell.row,
           gridColumn: cell.column,
           borderRadius: rad,
           backgroundColor: color,

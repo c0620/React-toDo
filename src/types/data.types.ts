@@ -46,6 +46,7 @@ export type TaggedTask = {
   tasks: Array<Task>;
   color: Color;
   name: string;
+  row: number;
 };
 
 export type TaggedTasks = Record<Tag["id"], TaggedTask>;

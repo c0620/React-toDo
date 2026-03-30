@@ -60,6 +60,7 @@ export type GanttTrack = {
   tagId: number;
   opacity: `${number}%`;
   color: Color;
+  row: number;
 };
 
 export type GanttCell = {
@@ -67,6 +68,7 @@ export type GanttCell = {
   isEnd: boolean;
   tasks: Array<Task>;
   column: number;
+  row: number;
 };
 
 export type Cell = {

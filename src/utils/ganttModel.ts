@@ -62,7 +62,8 @@ export default function buildWeekGanttTracks(
       tagId,
       tagged.color,
       isSelected,
-      tagged.tasks
+      tagged.tasks,
+      tagged.row
     );
 
     tracks.push(track);
@@ -77,13 +78,15 @@ function buildGanttTrack(
   tagId: GanttTrack["tagId"],
   color: GanttTrack["color"],
   isSelected: boolean,
-  tasks: Array<Task>
+  tasks: Array<Task>,
+  row: number
 ): GanttTrack {
   const ganttTrack: GanttTrack = {
     cells: [],
     tagId,
     opacity: isSelected ? "100%" : "30%",
     color,
+    row,
   };
 
   const weekTasks = segment.tasks;
@@ -136,6 +139,7 @@ function buildGanttTrack(
       isEnd: false,
       tasks: dayTasks,
       column: s,
+      row: row,
     };
 
     if (!segment.lstart && s == segment.start) {
