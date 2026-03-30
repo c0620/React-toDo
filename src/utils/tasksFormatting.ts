@@ -4,7 +4,7 @@ import type { Tag, TaggedTasks, Task } from "../types/data.types";
 export function makeTagged(
   userTasks: Array<Task>,
   userTags: Array<Tag>
-): TaggedTasks {
+): { tagged: TaggedTasks; maxRow: number } {
   const taggedTasks: TaggedTasks = {};
   const tags = userTags;
 
@@ -40,9 +40,9 @@ export function makeTagged(
     taggedTasks[currentTag.id] = tagged;
   }
 
-  denseRows(taggedTasks);
+  const maxRow = denseRows(taggedTasks);
 
-  return taggedTasks;
+  return { tagged: taggedTasks, maxRow };
 }
 
 export function sortTasksByDate(tasks: Array<Task>) {
@@ -57,29 +57,38 @@ export function sortTasksByDate(tasks: Array<Task>) {
   });
 }
 
-function denseRows(taggedTasks: TaggedTasks) {
+function denseRows(tt: TaggedTasks) {
   const rowsID = new Map();
-  for (let id in taggedTasks) {
-    const tagged = taggedTasks[id]!;
+  const taggedTasks = Object.entries(tt).sort(
+    ([, a], [, b]) => YMDToDateMs(a.first) - YMDToDateMs(b.first)
+  );
+  let maxRow = 0;
+  for (let [ID, tagged] of taggedTasks) {
     const dateStart = YMDToDateMs(tagged.first);
     const dateEnd = YMDToDateMs(tagged.last);
     let setID: number | null = 0;
 
-    for (const [id, dates] of rowsID) {
-      if (dates[1] < dateEnd) {
-        rowsID.set(id, [dateStart, dateEnd]);
-        tagged.row = id;
-        console.log(id);
+    for (const [rID, dates] of rowsID) {
+      if (dates[1] < dateStart) {
+        rowsID.set(rID, [dateStart, dateEnd]);
+        tt[+ID]!.row = rID;
+        console.log(tagged.name);
+        console.log(rID);
         setID = null;
         break;
       } else {
-        setID = id + 1;
+        setID = rID + 1;
       }
     }
     if (setID != null) {
       rowsID.set(setID, [dateStart, dateEnd]);
+      console.log(tagged.name);
       console.log(setID);
       tagged.row = setID;
+      if (setID > maxRow) {
+        maxRow = setID;
+      }
     }
   }
+  return maxRow;
 }

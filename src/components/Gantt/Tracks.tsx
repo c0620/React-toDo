@@ -1,4 +1,9 @@
-import type { TracksType, Cell, GanttCell } from "../../types/ui.types";
+import type {
+  TracksType,
+  Cell,
+  GanttCell,
+  TracksStyles,
+} from "../../types/ui.types";
 import type { TaggedTasks, TaggedTask, Task } from "../../types/data.types";
 import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
@@ -12,9 +17,9 @@ export default function Tracks({
   onTrackClick,
   selectedTag,
 }: TracksType) {
-  const taggedTasks = useTaggedTasks();
+  const data = useTaggedTasks();
 
-  const tracks = buildWeekGanttTracks(taggedTasks, days, selectedTag);
+  const tracks = buildWeekGanttTracks(data.tagged, days, selectedTag);
   const componentTracks: any = [];
 
   for (const track of tracks) {
@@ -25,12 +30,19 @@ export default function Tracks({
           cell={cell}
           onTrackClick={onTrackClick}
           selectedTag={selectedTag}
-          key={i + track.tagId}
+          key={cell.row * 10 + cell.column}
         />
       )
     );
   }
-  return <div className={styles.timelineTasks}>{componentTracks}</div>;
+  return (
+    <div
+      className={styles.timelineTasks}
+      style={{ "--row-count": data.maxRow } as TracksStyles}
+    >
+      {componentTracks}
+    </div>
+  );
 }
 
 function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
@@ -70,7 +82,7 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
         onMouseEnter={() => setTooltip(true)}
         onMouseLeave={() => setTooltip(false)}
         style={{
-          gridRow: cell.row,
+          gridRow: cell.row + 1,
           gridColumn: cell.column,
           borderRadius: rad,
           backgroundColor: color,
@@ -95,7 +107,7 @@ function Cell({ onTrackClick, track, cell, selectedTag }: Cell) {
             }}
           >
             {cell.tasks.map((t, i) => (
-              <p key={i}>{t.title}</p>
+              <p key={cell.row * 10 + cell.column}>{t.title}</p>
             ))}
           </div>,
           cellRef.current

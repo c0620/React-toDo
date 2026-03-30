@@ -77,3 +77,7 @@ export type Cell = {
   onTrackClick: OnTrackClick;
   selectedTag: GanttSelectedTag;
 };
+
+export interface TracksStyles extends React.CSSProperties {
+  "--row-count": number;
+}

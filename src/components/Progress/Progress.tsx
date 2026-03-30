@@ -4,7 +4,7 @@ import styles from "./Progress.module.scss";
 import type { ProgressTaskLine, InlineStyles } from "../../types/ui.types";
 
 export function Progress() {
-  const tagged = useTaggedTasks();
+  const tagged = useTaggedTasks().tagged;
   const maxCols = 2;
 
   let taskRows: Array<React.ReactElement> = [];
