@@ -53,7 +53,9 @@ export const useTasksTagsStore = create<TasksTagsStore>()(
 
       taskEdit: (task) =>
         set((state) => ({
-          tasks: state.tasks.map((t) => (t.id === task.id ? task : t)),
+          tasks: sortTasksByDate(
+            state.tasks.map((t) => (t.id === task.id ? task : t))
+          ),
         })),
 
       taskToggleDone: (task) =>
