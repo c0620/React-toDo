@@ -2,7 +2,7 @@
 @import "/src/styles/common.scss";
 .card {
   @extend .underlay;
-  width: calc(50% - var(--d-mgM));
+  width: calc(50% - var(--d-mgM) / 2);
   min-width: 320px;
   height: 180px;
   display: flex;

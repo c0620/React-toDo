@@ -9,8 +9,15 @@
   align-content: flex-start;
   flex-wrap: wrap;
   gap: var(--d-mgM);
+  justify-content: space-between;
   height: calc(var(--d-sect-height) - 80px);
   overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
 }
 
 .right {
@@ -34,6 +41,7 @@
   font-family:
     Mustica Pro,
     sans-serif;
+  overflow: hidden;
 }
 
 .filter-button-selected {
@@ -41,5 +49,6 @@
 }
 
 .filter-button:first-child {
-  width: calc(50% - var(--d-mgM));
+  flex-shrink: 0;
+  width: calc(50% - var(--d-mgM) / 2);
 }

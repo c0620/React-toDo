@@ -120,7 +120,7 @@ function Dashboard() {
             ].join(" ")}
             onClick={() => filterDoneTasks(sortTasksByDate(context.tasks))}
           >
-            Сделанные ({context.tasks.filter((t) => t.done).length})
+            Готовы ({context.tasks.filter((t) => t.done).length})
           </button>
         </div>
 
