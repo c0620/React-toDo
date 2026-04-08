@@ -72,8 +72,8 @@ function denseRows(tt: TaggedTasks) {
       if (dates[1] < dateStart) {
         rowsID.set(rID, [dateStart, dateEnd]);
         tt[+ID]!.row = rID;
-        console.log(tagged.name);
-        console.log(rID);
+        // console.log(tagged.name);
+        // console.log(rID);
         setID = null;
         break;
       } else {
@@ -82,8 +82,8 @@ function denseRows(tt: TaggedTasks) {
     }
     if (setID != null) {
       rowsID.set(setID, [dateStart, dateEnd]);
-      console.log(tagged.name);
-      console.log(setID);
+      // console.log(tagged.name);
+      // console.log(setID);
       tagged.row = setID;
       if (setID > maxRow) {
         maxRow = setID;

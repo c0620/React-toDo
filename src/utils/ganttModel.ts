@@ -100,7 +100,7 @@ function buildGanttTrack(
     let currentTask = weekTasks[i];
     const weekDayIndex = s - 1;
 
-    if (weekDayIndex > 7) {
+    if (weekDayIndex >= 7) {
       throw Error("Gantt: incorrect segment start/end");
     }
 

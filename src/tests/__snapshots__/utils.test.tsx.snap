@@ -1,0 +1,293 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ganttModel > buildWeekGanttTracks: build gantt tracks for given week (snapshot) 1`] = `
+[
+  {
+    "cells": [
+      {
+        "column": 3,
+        "isEnd": false,
+        "isStart": true,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 4,
+        "isEnd": false,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 5,
+        "isEnd": false,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 6,
+        "isEnd": true,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 1,
+            "tagId": 0,
+            "title": "taskID1-tagID0",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#000099",
+      "id": 0,
+      "main": "#0000FF",
+    },
+    "opacity": "100%",
+    "row": 0,
+    "tagId": 0,
+  },
+  {
+    "cells": [
+      {
+        "column": 7,
+        "isEnd": true,
+        "isStart": true,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-12",
+            "done": false,
+            "id": 2,
+            "tagId": 1,
+            "title": "taskID2-tagID1",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#009900",
+      "id": 1,
+      "main": "#00FF00",
+    },
+    "opacity": "100%",
+    "row": 0,
+    "tagId": 1,
+  },
+  {
+    "cells": [
+      {
+        "column": 6,
+        "isEnd": false,
+        "isStart": true,
+        "row": 1,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 3,
+            "tagId": 2,
+            "title": "taskID3-tagID2",
+          },
+        ],
+      },
+      {
+        "column": 7,
+        "isEnd": false,
+        "isStart": false,
+        "row": 1,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 3,
+            "tagId": 2,
+            "title": "taskID3-tagID2",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#990000",
+      "id": 2,
+      "main": "#FF0000",
+    },
+    "opacity": "100%",
+    "row": 1,
+    "tagId": 2,
+  },
+]
+`;
+
+exports[`ganttModel > gantt snapshot 1`] = `
+[
+  {
+    "cells": [
+      {
+        "column": 3,
+        "isEnd": false,
+        "isStart": true,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 4,
+        "isEnd": false,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 5,
+        "isEnd": false,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-08",
+            "done": false,
+            "id": 0,
+            "tagId": 0,
+            "title": "taskID0-tagID0",
+          },
+        ],
+      },
+      {
+        "column": 6,
+        "isEnd": true,
+        "isStart": false,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 1,
+            "tagId": 0,
+            "title": "taskID1-tagID0",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#000099",
+      "id": 0,
+      "main": "#0000FF",
+    },
+    "opacity": "100%",
+    "row": 0,
+    "tagId": 0,
+  },
+  {
+    "cells": [
+      {
+        "column": 7,
+        "isEnd": true,
+        "isStart": true,
+        "row": 0,
+        "tasks": [
+          {
+            "date": "2026-04-12",
+            "done": false,
+            "id": 2,
+            "tagId": 1,
+            "title": "taskID2-tagID1",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#009900",
+      "id": 1,
+      "main": "#00FF00",
+    },
+    "opacity": "100%",
+    "row": 0,
+    "tagId": 1,
+  },
+  {
+    "cells": [
+      {
+        "column": 6,
+        "isEnd": false,
+        "isStart": true,
+        "row": 1,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 3,
+            "tagId": 2,
+            "title": "taskID3-tagID2",
+          },
+        ],
+      },
+      {
+        "column": 7,
+        "isEnd": false,
+        "isStart": false,
+        "row": 1,
+        "tasks": [
+          {
+            "date": "2026-04-11",
+            "done": false,
+            "id": 3,
+            "tagId": 2,
+            "title": "taskID3-tagID2",
+          },
+        ],
+      },
+    ],
+    "color": {
+      "dark": "#990000",
+      "id": 2,
+      "main": "#FF0000",
+    },
+    "opacity": "100%",
+    "row": 1,
+    "tagId": 2,
+  },
+]
+`;

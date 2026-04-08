@@ -1,4 +1,4 @@
-class DateError extends Error {
+export class DateError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "DateError";

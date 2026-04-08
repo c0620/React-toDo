@@ -71,7 +71,7 @@
   display: grid;
   grid-auto-rows: 50px;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(var(--row-count) + 1, 50px);
+  grid-template-rows: repeat(calc(var(--row-count) + 1), 50px);
   row-gap: var(--d-mgS);
   min-height: 0;
   overflow-y: scroll;
