@@ -7,7 +7,7 @@ import ErrorPage from "./pages/ErrorPage";
 export const router = createHashRouter([
   {
     path: "/",
-    Component: App,
+    element: <App />,
     children: [
       {
         index: true,

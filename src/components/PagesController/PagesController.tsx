@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router-dom";
 import styles from "./PagesController.module.scss";
 import { useState } from "react";
 import arrowIcon from "../../assets/icons/arrow.svg";

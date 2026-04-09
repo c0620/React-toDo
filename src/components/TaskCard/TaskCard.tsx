@@ -2,7 +2,7 @@ import styles from "./TaskCard.module.scss";
 import clsx from "clsx";
 import type { TaskCard, InlineStyles } from "../../types/ui.types";
 import { YMDToDateMs } from "../../utils/convertDate";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import closeIcon from "../../assets/icons/close.svg";
 import editIcon from "../../assets/icons/edit.svg";
 

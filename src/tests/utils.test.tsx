@@ -1,22 +1,27 @@
 import { describe, expect, test, vi } from "vitest";
-import { DateError, dateToYMD, YMDToDateMs } from "../utils/convertDate";
+import * as convertDate from "../utils/convertDate";
 import { makeTagged } from "../utils/tasksFormatting";
 import { testMakeTagged, testTasksTags, testWeekGanttTracks } from "./testData";
 import buildWeekGanttTracks, {
+  _buildWeekSegment,
   buildWeek,
   findMonday,
 } from "../utils/ganttModel";
 
 describe("convertDate", () => {
   test("convert YMD string to DateMs", () => {
-    expect(YMDToDateMs("2026-04-08")).toBe(new Date(2026, 3, 8).getTime());
-    expect(() => YMDToDateMs("2026.04.08")).toThrow(
-      new DateError("Date format does not matches Y-M-D")
+    expect(convertDate.YMDToDateMs("2026-04-08")).toBe(
+      new Date(2026, 3, 8).getTime()
+    );
+    expect(() => convertDate.YMDToDateMs("2026.04.08")).toThrow(
+      new convertDate.DateError("Date format does not matches Y-M-D")
     );
   });
 
   test("convert Date to YMD string", () => {
-    expect(dateToYMD(new Date(2026, 3, 8, 0, 0))).toBe("2026-04-08");
+    expect(convertDate.dateToYMD(new Date(2026, 3, 8, 0, 0))).toBe(
+      "2026-04-08"
+    );
   });
 });
 
@@ -84,11 +89,11 @@ describe("ganttModel", () => {
     expect(result).toMatchSnapshot();
   });
 
-  // test("buildWeek starts from monday", () => {
-  //   const spy = vi.spyOn(findMonday, "YMDToDateMs");
+  test("_buildWeekSegment: use YMDToDateMs to parse date", () => {
+    const spy = vi.spyOn(convertDate, "YMDToDateMs");
 
-  //   buildWeekGanttTracks(tagged, week, null);
+    _buildWeekSegment(week, tagged[0]!);
 
-  //   expect(spy).toHaveBeenCalledTimes(2);
-  // });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
 });

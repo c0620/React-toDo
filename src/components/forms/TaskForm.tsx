@@ -5,7 +5,7 @@ import { SearchDropdown } from "./SearchDropdown";
 import styles from "./Forms.module.scss";
 import type { Task, Tag } from "../../types/data.types";
 import type { FormDataType } from "../../types/forms.types";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { showMessage } from "./FormMessage";
 
@@ -14,6 +14,8 @@ export function AddEditTask({ task }: { task: Task | null }) {
 
   let tag = context.tags[0];
   const isEmpty = tag == undefined;
+
+  console.log(task);
 
   if (task) {
     tag = context.tags.find((tag) => tag.id == task.tagId);
