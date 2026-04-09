@@ -38,14 +38,13 @@ export const useTasksTagsStore = create<TasksTagsStore>()(
         set((state) => {
           const tasksIDs = state.tasks.map((t) => t.id);
           let id = 0;
-          if (tasksIDs) {
+          if (tasksIDs.length != 0) {
             id = Math.max(...tasksIDs) + 1;
           }
           const newTask: Task = {
             id,
             ...task,
           };
-
           return {
             tasks: sortTasksByDate([...state.tasks, newTask]),
           };
