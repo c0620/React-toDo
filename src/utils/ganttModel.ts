@@ -49,7 +49,7 @@ export default function buildWeekGanttTracks(
   for (const [id, tagged] of Object.entries(taggedTasks)) {
     const isSelected = selectedTag == null || +id == selectedTag;
 
-    const segment = buildWeekSegment(days, tagged);
+    const segment = _buildWeekSegment(days, tagged);
     if (!segment) {
       continue;
     }
@@ -155,7 +155,10 @@ function buildGanttTrack(
   return ganttTrack;
 }
 
-function buildWeekSegment(days: Week, tagged: TaggedTask): TaggedWeek | null {
+export function _buildWeekSegment(
+  days: Week,
+  tagged: TaggedTask
+): TaggedWeek | null {
   const segment: TaggedWeek = {
     lstart: false, //add enum for flat/round end
     lend: false,

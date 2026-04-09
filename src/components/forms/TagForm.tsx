@@ -6,7 +6,7 @@ import React, {
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { useTasksTagsStore } from "../TaskManager";
+import { useTasksTagsStore } from "../taskManager";
 import { SearchDropdown } from "./SearchDropdown";
 import clsx from "clsx";
 import styles from "./Forms.module.scss";

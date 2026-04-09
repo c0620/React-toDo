@@ -1,5 +1,5 @@
 import type React from "react";
-import { useTaggedTasks } from "../TaskManager";
+import { useTaggedTasks } from "../taskManager";
 import styles from "./Progress.module.scss";
 import type { ProgressTaskLine, InlineStyles } from "../../types/ui.types";
 

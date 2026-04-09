@@ -10,7 +10,7 @@ import styles from "./Gantt.module.scss";
 import buildWeekGanttTracks from "../../utils/ganttModel";
 import { useEffect, useState, useRef, type ReactElement } from "react";
 import { createPortal } from "react-dom";
-import { useTaggedTasks } from "../TaskManager";
+import { useTaggedTasks } from "../taskManager";
 
 export default function Tracks({
   days,

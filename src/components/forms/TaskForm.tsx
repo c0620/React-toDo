@@ -1,4 +1,4 @@
-import { useTasksTagsStore } from "../TaskManager";
+import { useTasksTagsStore } from "../taskManager";
 import { dateToYMD } from "../../utils/convertDate";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SearchDropdown } from "./SearchDropdown";

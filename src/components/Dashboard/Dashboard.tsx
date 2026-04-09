@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.scss";
 import Gantt from "../Gantt/Gantt";
-import { useTasksTagsStore } from "../TaskManager";
+import { useTasksTagsStore } from "../taskManager";
 import { dateToYMD, YMDToDateMs } from "../../utils/convertDate";
 import Card from "../TaskCard/TaskCard";
 import type { Tag, Task } from "../../types/data.types";

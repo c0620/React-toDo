@@ -1,7 +1,7 @@
 import { Progress } from "../../components/Progress/Progress";
 import { AddEditTag } from "../../components/Forms/TagForm";
 import { AddEditTask } from "../../components/Forms/TaskForm";
-import { useTasksTagsStore } from "../../components/TaskManager";
+import { useTasksTagsStore } from "../../components/taskManager";
 import { useActionData, useLoaderData } from "react-router";
 import styles from "./UpdatePage.module.scss";
 

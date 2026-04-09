@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useReducer } from "react";
 import { initialTasksTags } from "../data.js";
-import { YMDToDateMs } from "../utils/convertDate";
+import { YMDToDateMs } from "../utils/convertDate.js";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
@@ -9,9 +9,9 @@ import type {
   TaggedTasks,
   Task,
   TasksTags,
-} from "../types/data.types";
+} from "../types/data.types.js";
 import type { Dispatch } from "react";
-import type { TaskAction } from "../types/data.types";
+import type { TaskAction } from "../types/data.types.js";
 import { makeTagged, sortTasksByDate } from "../utils/tasksFormatting.js";
 
 type TasksTagsStore = {

@@ -1,6 +1,6 @@
 import * as mock from "../../data";
 import { useState } from "react";
-import { useTaggedTasks, useTasksTagsStore } from "../TaskManager";
+import { useTaggedTasks, useTasksTagsStore } from "../taskManager";
 import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
 import Timeline from "./Timeline";
