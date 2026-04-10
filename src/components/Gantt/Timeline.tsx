@@ -28,7 +28,7 @@ export default function Timeline({ onTrackClick, selectedTag }: TimelineType) {
   );
 }
 
-function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
+export function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
   const months: string[] = days.reduce<string[]>((acc, day, index, days) => {
     if (index != 0 && days[index - 1]?.getFullYear() != day.getFullYear()) {
       acc[acc.length - 1] += " " + days[index - 1]?.getFullYear();
@@ -68,7 +68,7 @@ function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
   );
 }
 
-function Day({ day }: { day: Date }) {
+export function Day({ day }: { day: Date }) {
   let currentDate = new Date(Date.now());
 
   let style = styles.day;

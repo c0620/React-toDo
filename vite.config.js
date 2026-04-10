@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { playwright } from "@vitest/browser-playwright";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,6 +12,13 @@ export default defineConfig({
   css: {
     modules: {
       localsConvention: "camelCaseOnly",
+    },
+  },
+  test: {
+    browser: {
+      provider: playwright(),
+      enabled: true,
+      instances: [{ browser: "chromium" }],
     },
   },
 });
