@@ -42,7 +42,7 @@ export interface TracksType {
 }
 
 export interface SwitchWeekType {
-  days: Week;
+  week: Week;
   handleDayIndex: (i: number) => void;
   dayIndex: number;
 }

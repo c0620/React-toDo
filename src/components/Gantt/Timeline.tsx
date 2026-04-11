@@ -9,18 +9,18 @@ export default function Timeline({ onTrackClick, selectedTag }: TimelineType) {
   const monday = findMonday(new Date());
   const [dayIndexStart, setDayIndexStart] = useState(0);
   monday.setDate(monday.getDate() + dayIndexStart);
-  const switchDays = buildWeek(monday);
+  const week = buildWeek(monday);
 
   return (
     <div className={styles.timeline}>
       <SwitchWeek
-        days={switchDays}
+        week={week}
         handleDayIndex={setDayIndexStart}
         dayIndex={dayIndexStart}
       />
 
       <Tracks
-        days={switchDays}
+        days={week}
         onTrackClick={onTrackClick}
         selectedTag={selectedTag}
       />
@@ -28,8 +28,8 @@ export default function Timeline({ onTrackClick, selectedTag }: TimelineType) {
   );
 }
 
-export function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
-  const months: string[] = days.reduce<string[]>((acc, day, index, days) => {
+export function SwitchWeek({ week, handleDayIndex, dayIndex }: SwitchWeekType) {
+  const months: string[] = week.reduce<string[]>((acc, day, index, days) => {
     if (index != 0 && days[index - 1]?.getFullYear() != day.getFullYear()) {
       acc[acc.length - 1] += " " + days[index - 1]?.getFullYear();
     }
@@ -50,7 +50,7 @@ export function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
           {"<"}
         </button>
         <h2 className={styles.switchWeekMonth}>
-          {months.join(" — ")} {days[6].getFullYear()}
+          {months.join(" — ")} {week[6].getFullYear()}
         </h2>
         <button
           className={styles.switchWeekButton}
@@ -60,7 +60,7 @@ export function SwitchWeek({ days, handleDayIndex, dayIndex }: SwitchWeekType) {
         </button>
       </div>
       <div className={styles.switchWeekDays}>
-        {days.map((day) => (
+        {week.map((day) => (
           <Day day={day} key={day.getUTCDay()} />
         ))}
       </div>
