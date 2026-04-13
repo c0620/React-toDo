@@ -1,6 +1,5 @@
 import * as mock from "../../data";
 import { useState } from "react";
-import { useTaggedTasks, useTasksTagsStore } from "../taskManager";
 import { YMDToDateMs, dateToYMD } from "../../utils/convertDate";
 import styles from "./Gantt.module.scss";
 import Timeline from "./Timeline";
@@ -12,6 +11,7 @@ import type {
 } from "../../types/data.types";
 import type { GanttSelectedTag, OnTrackClick } from "../../types/ui.types";
 import { sortTasksByDate } from "../../utils/tasksFormatting";
+import { useTasksTagsStore } from "../taskManager";
 
 export default function Gantt({
   onTrackClick,
@@ -21,7 +21,7 @@ export default function Gantt({
   selectedTag: GanttSelectedTag;
 }) {
   return (
-    <div className={styles.gantt}>
+    <div className={styles.gantt} data-testid="gantt">
       <Timeline onTrackClick={onTrackClick} selectedTag={selectedTag} />
       {/* <Filter /> */}
     </div>
